@@ -12,7 +12,7 @@ var columnsToKeep = map[string]bool{
 	"from":        true,
 	"to":          true,
 	"timestamp":   true,
-	"toCreate":    true, // Add to process replacement
+	"toCreate":    false,
 }
 
 // Function to read whole CSV file (such as epoch files)
@@ -34,23 +34,47 @@ func ReadCSV(filename string) ([][]string, error) {
 	return rows, nil
 }
 
-// Function to split the entire transactions dataset into multiple epoch files
-func SplitEpochs(inputFilePath string) {
+func SplitMultipleDatasets(datasets []string, outputDir string, chunkSize int, maxTransactions int) {
 
-	outputDir := "output/" // Directory to save split files
+	transactionsRemaining := maxTransactions
+	var leftover [][]string
+	chunkNumber := 1
+
+	for _, dataset := range datasets {
+		fmt.Printf("Processing dataset: %s\n", dataset)
+		var err error
+		leftover, chunkNumber, transactionsRemaining, err = SplitEpochs(dataset, outputDir, chunkNumber, leftover, chunkSize, transactionsRemaining)
+		if err != nil {
+			fmt.Printf("Error processing dataset %s: %v\n", dataset, err)
+			break // stop the creation of epochs
+		}
+		if transactionsRemaining <= 0 {
+			fmt.Println("Reached maxTransactions limit.")
+			break
+		}
+	}
+
+	// Handle any final leftover
+	if len(leftover) > 1 {
+		saveChunk(outputDir, leftover, chunkNumber)
+	}
+}
+
+// Function to split the entire transactions dataset into multiple epoch files
+// Inputs: Dataset, Directory to save split files
+func SplitEpochs(inputFilePath string, outputDir string, startChunkNumber int, leftover [][]string,
+	chunkSize int, transactionsRemaining int) ([][]string, int, int, error) {
 
 	// Ensure the output directory exists
 	err := os.MkdirAll(outputDir, os.ModePerm)
 	if err != nil {
-		fmt.Println("Error creating output directory:", err)
-		return
+		return nil, startChunkNumber, transactionsRemaining, fmt.Errorf("error creating output directory: %w", err)
 	}
 
 	// Open the input file
 	file, err := os.Open(inputFilePath)
 	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
+		return nil, startChunkNumber, transactionsRemaining, fmt.Errorf("error opening file: %w", err)
 	}
 	defer file.Close()
 
@@ -60,8 +84,7 @@ func SplitEpochs(inputFilePath string) {
 	// Read the header row
 	header, err := reader.Read()
 	if err != nil {
-		fmt.Println("Error reading header:", err)
-		return
+		return nil, startChunkNumber, transactionsRemaining, fmt.Errorf("error reading header: %w", err)
 	}
 
 	// Map to store indices of required columns
@@ -72,47 +95,51 @@ func SplitEpochs(inputFilePath string) {
 		}
 	}
 
-	// Constants for splitting
-	const chunkSize = 100000
-	rowCount := 0
-	chunkNumber := 1
+	chunkNumber := startChunkNumber
+	currentChunk := [][]string{}
 
-	// Prepare a new chunk
-	var currentChunk [][]string
-	currentChunk = append(currentChunk, filterColumns(header, columnIndices, header)) // Add filtered header
+	// Use leftover if available
+	if len(leftover) > 0 {
+		currentChunk = leftover
+	} else {
+		currentChunk = append(currentChunk, filterColumns(header, columnIndices, header)) // Add filtered header
+	}
 
-	// Read and process rows
-	for {
+	rowCount := len(currentChunk) - 1 // Subtract header
+
+	// Read and process each row
+	for transactionsRemaining > 0 {
 		row, err := reader.Read()
 		if err != nil {
 			if err.Error() == "EOF" {
 				break
 			}
-			fmt.Println("Error reading row:", err)
-			return
+			return nil, chunkNumber, transactionsRemaining, fmt.Errorf("error reading row: %w", err)
 		}
 
-		// Filter the row based on required columns
 		filteredRow := filterColumns(row, columnIndices, header)
 		currentChunk = append(currentChunk, filteredRow)
 		rowCount++
+		transactionsRemaining--
 
-		// If the chunk size limit is reached, save the chunk
-		if rowCount%chunkSize == 0 {
+		if rowCount == chunkSize {
 			saveChunk(outputDir, currentChunk, chunkNumber)
-			currentChunk = [][]string{filterColumns(header, columnIndices, header)} // Reset chunk with filtered header
 			chunkNumber++
+			currentChunk = [][]string{filterColumns(header, columnIndices, header)} // reset chunk with header
+			rowCount = 0
 		}
 	}
 
-	// Save any remaining rows
+	// Return leftover (if any)
 	if len(currentChunk) > 1 {
-		saveChunk(outputDir, currentChunk, chunkNumber)
+		return currentChunk, chunkNumber, transactionsRemaining, nil
 	}
-	fmt.Println("CSV file successfully split into chunks.")
+
+	// No leftover
+	return nil, chunkNumber, transactionsRemaining, nil
 }
 
-// filterColumns filters a row to keep only the required columns and replaces "None" in "to"
+// filterColumns filters a row to keep only the required columns and replaces "None" in "to" with "toCreate"
 func filterColumns(row []string, columnIndices map[int]bool, header []string) []string {
 	var filteredRow []string
 
@@ -146,7 +173,7 @@ func filterColumns(row []string, columnIndices map[int]bool, header []string) []
 // saveChunk saves a chunk to a CSV file
 func saveChunk(outputDir string, chunk [][]string, chunkNumber int) {
 	// Create the output file
-	fileName := fmt.Sprintf("%schunk_%d.csv", outputDir, chunkNumber)
+	fileName := fmt.Sprintf("%sepoch_%d.csv", outputDir, chunkNumber)
 	outputFile, err := os.Create(fileName)
 	if err != nil {
 		fmt.Println("Error creating output file:", err)

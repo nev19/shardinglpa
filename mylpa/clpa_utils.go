@@ -1,4 +1,4 @@
-package paperclpa
+package mylpa
 
 // Import necessary packages
 import (
@@ -224,7 +224,7 @@ func GetBestShard(scores []*float64, randomGen *rand.Rand) int {
 }
 
 // The main CLPA function that iterates through all vertices and assigns shards
-func CLPAIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
+func CLPAIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
 
 	// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
 	// Initialize an array to store fitness values for each iteration
@@ -276,7 +276,7 @@ func CLPAIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	*/
 }
 
-// Alternative method for CLPA iteration with sync mode of updating instead of async as above
+// Alternative method for CLPA iteration with sync mode of updating instead of asynca as above
 func CLPAIterationSync(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
 
 	// Get a random order to use for this CLPA iteration

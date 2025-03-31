@@ -1,4 +1,4 @@
-package paperclpa
+package mylpa
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 	"example.com/shardinglpa/shared"
 )
 
-func PaperShardAllocation(datasetDir string, mode string) {
+func PaperShardAllocation(datasetDir string) {
 
 	// TESTING - cpu profiling
 	go func() {
@@ -140,7 +140,7 @@ func PaperShardAllocation(datasetDir string, mode string) {
 				graph.ShardWorkloads = CalculateShardWorkloads(graph)
 
 				// Now that preparation is ready, the actual CLPA can run and the results recorded
-				result := runCLPA(seed, alpha, beta, tau, rho, graph, inactiveVertices, randomGen, mode)
+				result := runCLPA(seed, alpha, beta, tau, rho, graph, inactiveVertices, randomGen)
 
 				// Append the result for the current epoch to the epochResults slice
 				epochResults = append(epochResults, result)
@@ -256,8 +256,7 @@ func PaperShardAllocation(datasetDir string, mode string) {
 
 }
 
-func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Graph,
-	inactiveVertices map[string]*shared.Vertex, randomGen *rand.Rand, mode string) shared.Result {
+func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Graph, inactiveVertices map[string]*shared.Vertex, randomGen *rand.Rand) shared.Result {
 
 	convergenceIter := -1 // Default value if no convergence
 
@@ -270,19 +269,8 @@ func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Gr
 			oldLabels[id] = vertex.Label
 		}
 
-		// Perform an iteration of CLPA according to the mode (sync or async)
-		if mode == "async" {
-			CLPAIterationAsync(graph, beta, randomGen, rho)
-		} else if mode == "sync" {
-			CLPAIterationSync(graph, beta, randomGen, rho)
-		} else {
-			log.Printf("Invalid mode: '%s'. Must be 'sync' or 'async'.\n", mode)
-			return shared.Result{
-				Seed:            seed,
-				Fitness:         -1,
-				ConvergenceIter: -1,
-			}
-		}
+		// Perform an iteration of CLPA
+		CLPAIteration(graph, beta, randomGen, rho)
 
 		// TESTING - Call CLPA in sync mode
 		//CLPAIterationSync(graph, beta, randomGen, rho)
