@@ -1,5 +1,7 @@
 package shared
 
+import "time"
+
 // Define the Vertex structure - this represents an account
 type Vertex struct {
 	ID                 string         // Address of the vertex used as unique identifier
@@ -19,10 +21,11 @@ type Graph struct {
 // Struct to hold results
 type Result struct {
 	Seed               int64
-	Fitness            float64
+	Fitness            float64 // The fitness score
 	WorkloadImbalance  float64
 	CrossShardWorkload int
-	ConvergenceIter    int // -1 if no convergence, otherwise the iteration number
+	ConvergenceIter    int           // -1 if no convergence, otherwise the iteration number
+	Duration           time.Duration // The time program ran
 }
 
 // Struct to hold the result of a single simulation run (per epoch)

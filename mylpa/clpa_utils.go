@@ -11,7 +11,7 @@ import (
 )
 
 // Function to create the graph from the rows
-func InitializeGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *rand.Rand) *shared.Graph {
+func initialiseGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *rand.Rand) *shared.Graph {
 
 	if len(rows) == 0 {
 		return graph
@@ -33,7 +33,7 @@ func InitializeGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *ra
 		return graph
 	}
 
-	// The vertices from previous epoch are kept in the graph, but the edges cleared
+	// The vertices from previous epoch are kept in the graph, but the edges and number of time updated are cleared
 	for _, vertex := range graph.Vertices {
 		vertex.Edges = make(map[string]int) // Reset edges
 		vertex.LabelUpdateCounter = 0
@@ -78,7 +78,7 @@ func InitializeGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *ra
 }
 
 // Function to calculate from sratch the workload of each shard
-func CalculateShardWorkloads(graph *shared.Graph) []int {
+func calculateShardWorkloads(graph *shared.Graph) []int {
 
 	workloads := make([]int, graph.NumberOfShards)
 
@@ -98,7 +98,7 @@ func CalculateShardWorkloads(graph *shared.Graph) []int {
 	return workloads
 }
 
-func MoveVertex(graph *shared.Graph, vertex *shared.Vertex, newShard int, rho int) {
+func moveVertex(graph *shared.Graph, vertex *shared.Vertex, newShard int, rho int) {
 
 	// Old shard refers to the shard the vertex was in before the current CLPA iteration
 	oldShard := vertex.Label
@@ -140,13 +140,21 @@ func MoveVertex(graph *shared.Graph, vertex *shared.Vertex, newShard int, rho in
 }
 
 // Score function: calculate how much a shard scores with respect to a vertex
-func CalculateScores(graph *shared.Graph, v *shared.Vertex, shardWorkloads []int, beta float64) []*float64 {
+func calculateScores(graph *shared.Graph, v *shared.Vertex, shardWorkloads []int, beta float64) []*float64 {
 
 	// Find the minimum workload of a shard
 	minWorkload := shardWorkloads[0]
 	for _, w := range shardWorkloads {
 		if w < minWorkload {
 			minWorkload = w
+		}
+	}
+
+	// find the maximum workload of a shard
+	maxWorkload := shardWorkloads[0]
+	for _, w := range shardWorkloads {
+		if w > maxWorkload {
+			maxWorkload = w
 		}
 	}
 
@@ -158,14 +166,11 @@ func CalculateScores(graph *shared.Graph, v *shared.Vertex, shardWorkloads []int
 
 		// Calculate the normalised edge weight contribution to the shard
 		edgeWeightWithShard := 0
-		totalEdgeWeight := 0
 
 		/* The weight of edges between the vertex being considered (v) and other vertices that reside in
 		the shard being considered (shard) is calculated.
-		Also, the Total weight of all edges incident to v is also calculated as specified in the paper.
 		v represents 'i' in the equation (8) */
 		for neighbour, weight := range v.Edges {
-			totalEdgeWeight += weight
 			if graph.Vertices[neighbour].Label == shard {
 				edgeWeightWithShard += weight
 			}
@@ -182,11 +187,13 @@ func CalculateScores(graph *shared.Graph, v *shared.Vertex, shardWorkloads []int
 			scores[shard] = nil
 		} else {
 
-			// Calculate the first term of the score function
-			firstTerm := float64(edgeWeightWithShard) / float64(totalEdgeWeight)
+			// Calculate the first term of the score function, omitting normalisation denominator
+			firstTerm := float64(edgeWeightWithShard)
 
 			// Calculate penalty term (second term of the score function)
-			penalty := 1 - (beta * (float64(shardWorkloads[shard]) / float64(minWorkload)))
+			pen_numerator := float64(shardWorkloads[shard]) - float64(minWorkload)
+			pen_denominator := float64(maxWorkload) - float64(minWorkload) + 0.0000000001
+			penalty := 1 - (beta * (pen_numerator / pen_denominator))
 
 			// The score of the shard with respect to the vertex is calculated and saves
 			scoreValue := firstTerm * penalty
@@ -198,7 +205,7 @@ func CalculateScores(graph *shared.Graph, v *shared.Vertex, shardWorkloads []int
 
 // If there is a tie in the scores of the shards with respect to a vertex, the winning shard is
 // chosen randomly from the highest scoring shards
-func GetBestShard(scores []*float64, randomGen *rand.Rand) int {
+func getBestShard(scores []*float64, randomGen *rand.Rand) int {
 
 	maxScore := math.Inf(-1)
 	var candidateShards []int
@@ -216,7 +223,7 @@ func GetBestShard(scores []*float64, randomGen *rand.Rand) int {
 		}
 	}
 
-	// Pick a shard randomly from candidates
+	// Pick a shard from candidates
 	if len(candidateShards) == 1 {
 		return candidateShards[0]
 	}
@@ -224,20 +231,20 @@ func GetBestShard(scores []*float64, randomGen *rand.Rand) int {
 }
 
 // The main CLPA function that iterates through all vertices and assigns shards
-func CLPAIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
+func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
 
 	// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
 	// Initialize an array to store fitness values for each iteration
 	//var fitnessValues []float64
 
 	// Get a random order to use for this CLPA iteration
-	sortedVertices := SetVerticesOrder(graph, randomGen)
+	sortedVertices := setVerticesOrder(graph, randomGen)
 
 	// Iterate through each vertex in some order
 	for _, vertex := range sortedVertices {
 
 		// Calculate the score of shards with respect to current vertex
-		scores := CalculateScores(graph, vertex, graph.ShardWorkloads, beta)
+		scores := calculateScores(graph, vertex, graph.ShardWorkloads, beta)
 
 		// TESTING - PRINT OUT SCORES
 		/*
@@ -255,11 +262,11 @@ func CLPAIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho 
 		*/
 
 		// Get the ID of the best shard with respect to current vertex
-		bestShard := GetBestShard(scores, randomGen)
+		bestShard := getBestShard(scores, randomGen)
 		//fmt.Println("Winner: ", bestShard)
 
 		// Move current vertex to new best shard
-		MoveVertex(graph, vertex, bestShard, rho)
+		moveVertex(graph, vertex, bestShard, rho)
 
 		// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
 		// Calculate fitness and append to the array
@@ -276,35 +283,8 @@ func CLPAIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho 
 	*/
 }
 
-// Alternative method for CLPA iteration with sync mode of updating instead of asynca as above
-func CLPAIterationSync(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
-
-	// Get a random order to use for this CLPA iteration
-	sortedVertices := SetVerticesOrder(graph, randomGen)
-
-	// Iterate through each vertex in some order
-	for _, vertex := range sortedVertices {
-
-		// Calculate the score of shards with respect to current vertex
-		scores := CalculateScores(graph, vertex, graph.ShardWorkloads, beta)
-
-		// Get the ID of the best shard with respect to current vertex
-		bestShard := GetBestShard(scores, randomGen)
-
-		// Store the ID of the shard which the vertex should set its label to
-		vertex.NewLabel = bestShard
-	}
-
-	// Only at the end of the CLPA iteration are the vertex labels updated
-	for _, vertex := range sortedVertices {
-
-		// move vertex to new best shard
-		MoveVertex(graph, vertex, vertex.NewLabel, rho)
-	}
-}
-
 // Function to set the random order of traversal of vertices
-func SetVerticesOrder(graph *shared.Graph, randomGen *rand.Rand) []*shared.Vertex {
+func setVerticesOrder(graph *shared.Graph, randomGen *rand.Rand) []*shared.Vertex {
 
 	// Extract vertex ids from the map
 	ids := make([]string, 0, len(graph.Vertices))
@@ -321,7 +301,7 @@ func SetVerticesOrder(graph *shared.Graph, randomGen *rand.Rand) []*shared.Verte
 		vertices = append(vertices, graph.Vertices[key])
 	}
 
-	// Shuffle the slice randomly
+	// Shuffle the slice randomly (accprding to seed)
 	randomGen.Shuffle(len(vertices), func(i, j int) {
 		vertices[i], vertices[j] = vertices[j], vertices[i]
 	})

@@ -43,7 +43,7 @@ func SplitMultipleDatasets(datasets []string, outputDir string, chunkSize int, m
 	for _, dataset := range datasets {
 		fmt.Printf("Processing dataset: %s\n", dataset)
 		var err error
-		leftover, chunkNumber, transactionsRemaining, err = SplitEpochs(dataset, outputDir, chunkNumber, leftover, chunkSize, transactionsRemaining)
+		leftover, chunkNumber, transactionsRemaining, err = splitEpochs(dataset, outputDir, chunkNumber, leftover, chunkSize, transactionsRemaining)
 		if err != nil {
 			fmt.Printf("Error processing dataset %s: %v\n", dataset, err)
 			break // stop the creation of epochs
@@ -62,7 +62,7 @@ func SplitMultipleDatasets(datasets []string, outputDir string, chunkSize int, m
 
 // Function to split the entire transactions dataset into multiple epoch files
 // Inputs: Dataset, Directory to save split files
-func SplitEpochs(inputFilePath string, outputDir string, startChunkNumber int, leftover [][]string,
+func splitEpochs(inputFilePath string, outputDir string, startChunkNumber int, leftover [][]string,
 	chunkSize int, transactionsRemaining int) ([][]string, int, int, error) {
 
 	// Ensure the output directory exists

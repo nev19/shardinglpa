@@ -2,7 +2,7 @@ package shared
 
 import "math"
 
-func CalculateWorkloadImbalance(graph *Graph) float64 {
+func calculateWorkloadImbalance(graph *Graph) float64 {
 	// Step 1: Calculate the total workload
 	totalWorkload := 0
 	for _, workload := range graph.ShardWorkloads {
@@ -25,7 +25,7 @@ func CalculateWorkloadImbalance(graph *Graph) float64 {
 	return maxDifference
 }
 
-func CalculateCrossShardWorkload(graph *Graph) int {
+func calculateCrossShardWorkload(graph *Graph) int {
 	crossShardWorkload := 0
 
 	// Iterate over all vertices in the graph
@@ -46,10 +46,10 @@ func CalculateCrossShardWorkload(graph *Graph) int {
 
 func CalculateFitness(graph *Graph, alpha float64) (float64, int, float64) {
 	// Step 1: Calculate workload imbalance
-	workloadImbalance := CalculateWorkloadImbalance(graph)
+	workloadImbalance := calculateWorkloadImbalance(graph)
 
 	// Step 2: Calculate cross-shard workload
-	crossShardWorkload := CalculateCrossShardWorkload(graph)
+	crossShardWorkload := calculateCrossShardWorkload(graph)
 
 	// Step 3: Compute fitness
 	fitness := alpha*float64(crossShardWorkload) + (1-alpha)*workloadImbalance
