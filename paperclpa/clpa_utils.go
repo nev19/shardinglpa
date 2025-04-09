@@ -10,8 +10,8 @@ import (
 	"example.com/shardinglpa/shared"
 )
 
-// Function to create the graph from the rows
-func initialiseGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *rand.Rand) *shared.Graph {
+// Function to initialise the graph from the data
+func InitialiseGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *rand.Rand) *shared.Graph {
 
 	if len(rows) == 0 {
 		return graph
@@ -39,8 +39,8 @@ func initialiseGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *ra
 		vertex.LabelUpdateCounter = 0
 	}
 
-	// Skip the header (assumes "blockNumber, timestamp, from, to" in the first row)
 	for i, row := range rows {
+		// Skip the header
 		if i == 0 {
 			continue
 		}
@@ -227,7 +227,7 @@ func getBestShard(scores []*float64, randomGen *rand.Rand) int {
 func clpaIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
 
 	// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
-	// Initialize an array to store fitness values for each iteration
+	// Initialise an array to store fitness values for each iteration
 	//var fitnessValues []float64
 
 	// Get a random order to use for this CLPA iteration
@@ -276,7 +276,7 @@ func clpaIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	*/
 }
 
-// Alternative method for CLPA iteration with sync mode of updating instead of async as above
+// Alternative method for CLPA iteration with sync mode of updating instead of asynca as above
 func clpaIterationSync(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
 
 	// Get a random order to use for this CLPA iteration

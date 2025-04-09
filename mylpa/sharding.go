@@ -27,11 +27,11 @@ the number of iterations of LPA (tau)
 Output:
 The epoch results for each seed
 */
-func ShardAllocation(datasetDir string, numShards int, numberOfRuns int, numberOfEpochs int,
+func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns int, numberOfEpochs int,
 	rho int, alpha float64, beta float64, tau int) []shared.SeedResults {
 
 	// Get the random seeds
-	seeds, err := getSeeds("mylpa/seeds.csv", numberOfRuns)
+	seeds, err := getSeeds("mylpa/seeds.csv", numberOfParallelRuns)
 	if err != nil {
 		log.Fatalf("Failed to load seeds: %v", err)
 	}
@@ -40,7 +40,7 @@ func ShardAllocation(datasetDir string, numShards int, numberOfRuns int, numberO
 	var wg sync.WaitGroup
 
 	// Buffered channel to collect results from each seed's run
-	results := make(chan shared.SeedResults, numberOfRuns)
+	results := make(chan shared.SeedResults, numberOfParallelRuns)
 
 	// Iterate through each seed
 	for _, seed := range seeds {
@@ -60,11 +60,11 @@ func ShardAllocation(datasetDir string, numShards int, numberOfRuns int, numberO
 			// Create a new graph
 			graph := &shared.Graph{
 				Vertices:       make(map[string]*shared.Vertex),
-				NumberOfShards: numShards,
+				NumberOfShards: numberOfShards,
 			}
 
 			// Slice to store epoch results for this seed
-			var epochResults []shared.Result
+			var epochResults []shared.EpochResult
 
 			// Iterate over the epochs
 			for epoch := 1; epoch <= numberOfEpochs; epoch++ {
@@ -125,7 +125,12 @@ func ShardAllocation(datasetDir string, numShards int, numberOfRuns int, numberO
 				graph.ShardWorkloads = calculateShardWorkloads(graph)
 
 				// Now that preparation is ready, the actual CLPA can run and the results recorded
-				result := runCLPA(seed, alpha, beta, tau, rho, graph, inactiveVertices, randomGen)
+				result := runCLPA(seed, alpha, beta, tau, rho, graph, randomGen)
+
+				// Add inactive vertices back to graph for the next epoch
+				for id, vertex := range inactiveVertices {
+					graph.Vertices[id] = vertex
+				}
 
 				// Add the time program ran
 				result.Duration = time.Since(start)
@@ -135,7 +140,7 @@ func ShardAllocation(datasetDir string, numShards int, numberOfRuns int, numberO
 			}
 
 			// Send all epoch results for this seed to the results channel as a single SeedResults struct
-			results <- shared.SeedResults{Seed: seed, Results: epochResults}
+			results <- shared.SeedResults{Seed: seed, EpochResult: epochResults}
 		}(seed)
 	}
 
@@ -145,7 +150,7 @@ func ShardAllocation(datasetDir string, numShards int, numberOfRuns int, numberO
 
 	// Collect results into a slice
 	var groupedResults []shared.SeedResults
-	for i := 0; i < numberOfRuns; i++ {
+	for i := 0; i < numberOfParallelRuns; i++ {
 		seedResult := <-results
 		groupedResults = append(groupedResults, seedResult)
 	}
@@ -154,7 +159,7 @@ func ShardAllocation(datasetDir string, numShards int, numberOfRuns int, numberO
 	return groupedResults
 }
 
-func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Graph, inactiveVertices map[string]*shared.Vertex, randomGen *rand.Rand) shared.Result {
+func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Graph, randomGen *rand.Rand) shared.EpochResult {
 
 	convergenceIter := -1 // Default value if no convergence
 
@@ -191,11 +196,6 @@ func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Gr
 
 	}
 
-	// Add inactive vertices back to graph for the next epoch
-	for id, vertex := range inactiveVertices {
-		graph.Vertices[id] = vertex
-	}
-
 	// TESTING - print workloads at end
 	/*
 		fmt.Println("\n\nWorkloads at End:")
@@ -212,7 +212,7 @@ func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Gr
 	*/
 
 	workloadImbalance, crossShardWorkload, fitness := shared.CalculateFitness(graph, alpha)
-	return shared.Result{
+	return shared.EpochResult{
 		Seed:               seed,
 		Fitness:            fitness,
 		WorkloadImbalance:  workloadImbalance,

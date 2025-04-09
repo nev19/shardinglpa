@@ -1,0 +1,269 @@
+2025/04/08 11:47:21 Program started
+2025/04/08 11:47:21 Start Test Suite A - Test CLPA as in paper for 100 different seeds
+2025/04/08 11:47:21 Start Test A1/ - beta = 0.2, shards = 8, arrival rate = low
+2025/04/08 12:05:50 Program started
+2025/04/08 12:05:50 Start Test Suite A - Test CLPA as in paper for 100 different seeds
+2025/04/08 12:05:50 Start Test 1/ - beta = 0.2, shards = 8, arrival rate = low
+2025/04/08 12:10:38 Program started
+2025/04/08 12:10:38 Start Test Suite A - Test CLPA as in paper for 100 different seeds
+2025/04/08 12:10:38 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 12:28:27 Program started
+2025/04/08 12:28:27 Start Test Suite A - Test CLPA as in paper for 100 different seeds
+2025/04/08 12:28:27 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 12:54:34 Program started
+2025/04/08 12:54:34 Start Test Suite A - Test CLPA as in paper for 100 different seeds
+2025/04/08 12:54:34 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 13:06:57 Program started
+2025/04/08 13:06:57 Start Test Suite A - Test CLPA as in paper for 100 different seeds
+2025/04/08 13:06:57 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 13:08:08 PROGRAM STARTED ***********
+2025/04/08 13:08:08 Start Test Suite A - Test CLPA as in paper for 100 different seeds
+2025/04/08 13:08:08 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 18:01:08 PROGRAM STARTED ***********
+2025/04/08 18:01:08 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 18:01:08 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 18:02:51 PROGRAM STARTED ***********
+2025/04/08 18:02:51 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 18:02:51 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 18:23:26 PROGRAM STARTED ***********
+2025/04/08 18:23:26 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 18:23:26 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 18:26:05 PROGRAM STARTED ***********
+2025/04/08 18:26:05 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 18:26:05 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 19:16:50 PROGRAM STARTED ***********
+2025/04/08 19:16:50 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 19:16:50 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 19:21:54 PROGRAM STARTED ***********
+2025/04/08 19:21:54 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 19:21:54 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 19:49:15 PROGRAM STARTED ***********
+2025/04/08 19:49:15 Failed to create CSV file 'paper_CLPA': open results/paper_CLPA.csv: The process cannot access the file because it is being used by another process.
+2025/04/08 19:49:28 PROGRAM STARTED ***********
+2025/04/08 19:49:28 Maximum number of cores:  8
+2025/04/08 19:49:28 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 19:49:28 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 19:50:06 PROGRAM STARTED ***********
+2025/04/08 19:50:06 Maximum number of cores:  8
+2025/04/08 19:50:06 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 19:50:06 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 19:50:23 PROGRAM STARTED ***********
+2025/04/08 19:50:23 Maximum number of cores:  8
+2025/04/08 19:50:23 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 19:50:23 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 19:51:03 PROGRAM STARTED ***********
+2025/04/08 19:51:03 Maximum number of cores:  8
+2025/04/08 19:51:03 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 19:51:03 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/08 19:59:27 PROGRAM STARTED ***********
+2025/04/08 19:59:27 Maximum number of cores:  8
+2025/04/08 19:59:27 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/08 19:59:27 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:02:24 PROGRAM STARTED ***********
+2025/04/09 10:02:24 Maximum number of cores:  8
+2025/04/09 10:02:24 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:02:24 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:06:25 PROGRAM STARTED ***********
+2025/04/09 10:06:25 Maximum number of cores:  8
+2025/04/09 10:06:25 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:06:25 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:07:27 PROGRAM STARTED ***********
+2025/04/09 10:07:27 Maximum number of cores:  8
+2025/04/09 10:07:27 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:07:27 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:11:52 PROGRAM STARTED ***********
+2025/04/09 10:11:52 Maximum number of cores:  8
+2025/04/09 10:11:52 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:11:52 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:15:33 PROGRAM STARTED ***********
+2025/04/09 10:15:33 Maximum number of cores:  8
+2025/04/09 10:15:33 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:15:33 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:27:46 PROGRAM STARTED ***********
+2025/04/09 10:27:46 Maximum number of cores:  8
+2025/04/09 10:27:46 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:27:46 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:28:54 PROGRAM STARTED ***********
+2025/04/09 10:28:54 Maximum number of cores:  8
+2025/04/09 10:28:54 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:28:54 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:34:19 PROGRAM STARTED ***********
+2025/04/09 10:34:19 Maximum number of cores:  8
+2025/04/09 10:34:19 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:34:19 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:37:43 PROGRAM STARTED ***********
+2025/04/09 10:37:43 Maximum number of cores:  8
+2025/04/09 10:37:43 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:37:43 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:40:54 PROGRAM STARTED ***********
+2025/04/09 10:40:54 Maximum number of cores:  8
+2025/04/09 10:40:54 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:40:54 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 10:43:09 PROGRAM STARTED ***********
+2025/04/09 10:43:09 Maximum number of cores:  8
+2025/04/09 10:43:09 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 10:43:09 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 11:16:13 PROGRAM STARTED ***********
+2025/04/09 11:16:13 Maximum number of cores:  8
+2025/04/09 11:16:13 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 11:16:13 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 11:23:00 PROGRAM STARTED ***********
+2025/04/09 11:23:00 Maximum number of cores:  8
+2025/04/09 11:23:00 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 11:23:00 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 11:24:55 PROGRAM STARTED ***********
+2025/04/09 11:24:55 Failed to create CSV file 'paper_CLPA': open results/paper_CLPA.csv: The process cannot access the file because it is being used by another process.
+2025/04/09 11:25:02 PROGRAM STARTED ***********
+2025/04/09 11:25:02 Maximum number of cores:  8
+2025/04/09 11:25:02 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 11:25:02 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 12:35:47 PROGRAM STARTED ***********
+2025/04/09 12:35:47 Maximum number of cores:  8
+2025/04/09 12:35:47 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 12:35:47 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 12:46:41 PROGRAM STARTED ***********
+2025/04/09 12:46:41 Maximum number of cores:  8
+2025/04/09 12:46:41 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 12:46:41 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 13:01:59 PROGRAM STARTED ***********
+2025/04/09 13:01:59 Maximum number of cores:  8
+2025/04/09 13:01:59 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 13:01:59 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 13:16:07 PROGRAM STARTED ***********
+2025/04/09 13:16:07 Could not create times_test_A.csv: open results/times_test_A.csv: The process cannot access the file because it is being used by another process.
+2025/04/09 13:16:16 PROGRAM STARTED ***********
+2025/04/09 13:16:16 Could not create times_test_A.csv: open results/times_test_A.csv: The process cannot access the file because it is being used by another process.
+2025/04/09 13:16:24 PROGRAM STARTED ***********
+2025/04/09 13:16:24 Maximum number of cores:  8
+2025/04/09 13:16:24 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 13:16:24 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 13:18:03 PROGRAM STARTED ***********
+2025/04/09 13:18:03 Maximum number of cores:  8
+2025/04/09 13:18:03 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 13:18:03 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 13:19:29 PROGRAM STARTED ***********
+2025/04/09 13:19:29 Maximum number of cores:  8
+2025/04/09 13:19:29 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 13:19:29 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 20:55:31 PROGRAM STARTED ***********
+2025/04/09 20:55:31 Maximum number of cores:  8
+2025/04/09 20:55:31 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 20:55:31 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 20:56:24 PROGRAM STARTED ***********
+2025/04/09 20:56:24 Maximum number of cores:  8
+2025/04/09 20:56:24 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 20:56:24 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 20:57:49 PROGRAM STARTED ***********
+2025/04/09 20:57:49 Maximum number of cores:  8
+2025/04/09 20:57:49 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 20:57:49 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:02:11 PROGRAM STARTED ***********
+2025/04/09 21:02:11 Maximum number of cores:  8
+2025/04/09 21:02:11 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:02:11 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:02:37 PROGRAM STARTED ***********
+2025/04/09 21:02:37 Maximum number of cores:  8
+2025/04/09 21:02:37 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:02:37 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:05:25 PROGRAM STARTED ***********
+2025/04/09 21:05:25 Failed to create CSV file 'paper_CLPA': open results/paper_CLPA.csv: The process cannot access the file because it is being used by another process.
+2025/04/09 21:05:35 PROGRAM STARTED ***********
+2025/04/09 21:05:35 Maximum number of cores:  8
+2025/04/09 21:05:35 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:05:35 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:16:47 PROGRAM STARTED ***********
+2025/04/09 21:16:47 Maximum number of cores:  8
+2025/04/09 21:16:47 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:16:47 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:18:40 PROGRAM STARTED ***********
+2025/04/09 21:18:40 Maximum number of cores:  8
+2025/04/09 21:18:40 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:18:40 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:19:38 PROGRAM STARTED ***********
+2025/04/09 21:19:38 Maximum number of cores:  8
+2025/04/09 21:19:38 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:19:38 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:21:26 PROGRAM STARTED ***********
+2025/04/09 21:21:26 Maximum number of cores:  8
+2025/04/09 21:21:26 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:21:26 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:24:05 PROGRAM STARTED ***********
+2025/04/09 21:24:05 Maximum number of cores:  8
+2025/04/09 21:24:05 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:24:05 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:28:30 PROGRAM STARTED ***********
+2025/04/09 21:28:30 Maximum number of cores:  8
+2025/04/09 21:28:30 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:28:30 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:30:18 PROGRAM STARTED ***********
+2025/04/09 21:30:18 Maximum number of cores:  8
+2025/04/09 21:30:18 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:30:18 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:34:32 PROGRAM STARTED ***********
+2025/04/09 21:34:32 Maximum number of cores:  8
+2025/04/09 21:34:32 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:34:32 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:37:33 PROGRAM STARTED ***********
+2025/04/09 21:37:33 Maximum number of cores:  8
+2025/04/09 21:37:33 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:37:33 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:40:29 PROGRAM STARTED ***********
+2025/04/09 21:40:29 Maximum number of cores:  8
+2025/04/09 21:40:29 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:40:29 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:42:46 PROGRAM STARTED ***********
+2025/04/09 21:42:46 Maximum number of cores:  8
+2025/04/09 21:42:46 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:42:46 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:50:49 PROGRAM STARTED ***********
+2025/04/09 21:50:49 Maximum number of cores:  8
+2025/04/09 21:50:49 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:50:49 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:52:49 PROGRAM STARTED ***********
+2025/04/09 21:52:49 Maximum number of cores:  8
+2025/04/09 21:52:49 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:52:49 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:54:17 Test finished
+2025/04/09 21:57:48 PROGRAM STARTED ***********
+2025/04/09 21:57:48 Maximum number of cores:  8
+2025/04/09 21:57:48 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:57:48 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 21:58:28 Test finished
+2025/04/09 21:59:42 PROGRAM STARTED ***********
+2025/04/09 21:59:42 Maximum number of cores:  8
+2025/04/09 21:59:42 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 21:59:42 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 22:00:24 Test finished
+2025/04/09 22:03:39 PROGRAM STARTED ***********
+2025/04/09 22:03:39 Maximum number of cores:  8
+2025/04/09 22:03:39 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 22:03:39 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 22:10:57 Test finished
+2025/04/09 22:13:01 PROGRAM STARTED ***********
+2025/04/09 22:13:01 Failed to create CSV file 'paper_CLPA': open results/paper_CLPA.csv: The process cannot access the file because it is being used by another process.
+2025/04/09 22:13:08 PROGRAM STARTED ***********
+2025/04/09 22:13:08 Maximum number of cores:  8
+2025/04/09 22:13:08 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 22:13:08 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 22:20:00 Test finished
+2025/04/09 22:23:46 PROGRAM STARTED ***********
+2025/04/09 22:23:46 Failed to create CSV file 'paper_CLPA': open results/paper_CLPA.csv: The process cannot access the file because it is being used by another process.
+2025/04/09 22:23:53 PROGRAM STARTED ***********
+2025/04/09 22:23:53 Maximum number of cores:  8
+2025/04/09 22:23:53 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 22:23:53 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 22:26:46 Test finished
+2025/04/09 22:30:48 PROGRAM STARTED ***********
+2025/04/09 22:30:48 Maximum number of cores:  8
+2025/04/09 22:30:48 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 22:30:48 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 22:55:53 PROGRAM STARTED ***********
+2025/04/09 22:55:53 Failed to create CSV file 'paper_CLPA_parallel': open results/paper_CLPA_parallel.csv: The process cannot access the file because it is being used by another process.
+2025/04/09 22:56:01 PROGRAM STARTED ***********
+2025/04/09 22:56:01 Maximum number of cores:  8
+2025/04/09 22:56:01 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 22:56:01 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/09 22:58:47 PROGRAM STARTED ***********
+2025/04/09 22:58:47 Maximum number of cores:  8
+2025/04/09 22:58:47 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/09 22:58:47 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low

@@ -1,6 +1,8 @@
 package shared
 
-import "time"
+import (
+	"time"
+)
 
 // Define the Vertex structure - this represents an account
 type Vertex struct {
@@ -18,18 +20,20 @@ type Graph struct {
 	ShardWorkloads []int              // Current workloads of shards
 }
 
-// Struct to hold results
-type Result struct {
+// Struct to hold results of a single epoch
+type EpochResult struct {
 	Seed               int64
 	Fitness            float64 // The fitness score
 	WorkloadImbalance  float64
 	CrossShardWorkload int
 	ConvergenceIter    int           // -1 if no convergence, otherwise the iteration number
 	Duration           time.Duration // The time program ran
+	Graph              *Graph
 }
 
-// Struct to hold the result of a single simulation run (per epoch)
+// OLD Struct to hold the result of a single simulation run (per epoch)
 type SeedResults struct {
-	Seed    int64
-	Results []Result
+	Seed        int64
+	Graph       *Graph
+	EpochResult []EpochResult
 }

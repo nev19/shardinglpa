@@ -1,0 +1,4 @@
+Run,Seed,Epoch,Fitness,WorkloadImbalance,CrossShardWorkload,ConvergenceIterations,TimeRan,beta,transactionArrivalRate,numberOfShards
+1,"	-1",1,25473.750,11623.500,39324,78,0.000,0.2,low,8
+1,"	-1",2,25967.000,12510.000,39424,100,0.000,0.2,low,8
+1,"	-1",3,27968.250,13388.500,42548,-1,0.000,0.2,low,8
