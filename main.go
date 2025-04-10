@@ -75,7 +75,7 @@ func main() {
 	log.Println("Maximum number of cores: ", runtime.NumCPU())
 
 	// The number of epochs
-	numberOfEpochs := 30
+	numberOfEpochs := 10
 
 	// The number of times/threshold each vertex is allowed to update its label (rho)
 	rho := 50
@@ -104,6 +104,7 @@ func main() {
 	log.Println("Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times")
 
 	numberOfParallelRuns := int(runtime.NumCPU())
+	//numberOfParallelRuns = 64
 
 	// TEST 1
 	arrivalRate = "low"
