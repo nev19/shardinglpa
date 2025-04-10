@@ -281,3 +281,31 @@
 2025/04/10 10:40:31 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
 2025/04/10 10:40:31 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
 2025/04/10 10:56:22 Test finished
+2025/04/10 10:59:23 PROGRAM STARTED ***********
+2025/04/10 10:59:23 Maximum number of cores:  8
+2025/04/10 10:59:23 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 10:59:23 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 11:53:40 PROGRAM STARTED ***********
+2025/04/10 11:53:40 Failed to create CSV file 'paper_CLPA_parallel': open results/paper_CLPA_parallel.csv: The process cannot access the file because it is being used by another process.
+2025/04/10 11:53:47 PROGRAM STARTED ***********
+2025/04/10 11:53:47 Maximum number of cores:  8
+2025/04/10 11:53:47 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 11:53:47 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 11:57:15 PROGRAM STARTED ***********
+2025/04/10 11:57:15 Maximum number of cores:  8
+2025/04/10 11:57:15 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 11:57:15 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 11:58:50 Test finished
+2025/04/10 12:07:48 PROGRAM STARTED ***********
+2025/04/10 12:07:48 Maximum number of cores:  8
+2025/04/10 12:07:48 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 12:07:48 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 12:10:01 PROGRAM STARTED ***********
+2025/04/10 12:10:01 Maximum number of cores:  8
+2025/04/10 12:10:01 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 12:10:01 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 12:12:20 PROGRAM STARTED ***********
+2025/04/10 12:12:20 Maximum number of cores:  8
+2025/04/10 12:12:20 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 12:12:20 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 12:13:13 Test finished
