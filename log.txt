@@ -267,3 +267,17 @@
 2025/04/09 22:58:47 Maximum number of cores:  8
 2025/04/09 22:58:47 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
 2025/04/09 22:58:47 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 10:17:24 PROGRAM STARTED ***********
+2025/04/10 10:17:24 Maximum number of cores:  12
+2025/04/10 10:17:24 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 10:17:24 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 10:23:57 PROGRAM STARTED ***********
+2025/04/10 10:23:57 Maximum number of cores:  12
+2025/04/10 10:23:57 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 10:23:57 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 10:36:43 Test finished
+2025/04/10 10:40:31 PROGRAM STARTED ***********
+2025/04/10 10:40:31 Maximum number of cores:  12
+2025/04/10 10:40:31 Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times
+2025/04/10 10:40:31 Start Test 1/ - beta = 0.2, shards = 8, tx arrival rate = low
+2025/04/10 10:56:22 Test finished
