@@ -75,7 +75,7 @@ func main() {
 	log.Println("Maximum number of cores: ", runtime.NumCPU())
 
 	// The number of epochs
-	numberOfEpochs := 10
+	numberOfEpochs := 30
 
 	// The number of times/threshold each vertex is allowed to update its label (rho)
 	rho := 50
@@ -93,7 +93,7 @@ func main() {
 	// The transaction arrival rate
 	arrivalRate := "low"
 
-	experimentRuns := 3
+	experimentRuns := 1
 
 	// END OF SETUP
 
@@ -104,7 +104,7 @@ func main() {
 	log.Println("Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times")
 
 	numberOfParallelRuns := int(runtime.NumCPU())
-	//numberOfParallelRuns = 64
+	numberOfParallelRuns = 64
 
 	// TEST 1
 	arrivalRate = "low"
@@ -147,6 +147,10 @@ func main() {
 
 			// Get the best graph from all of the parallel runs
 			graphParallel = getBestGraph(seedsResults)
+
+			for _, result := range seedsResults {
+				result.Graph = nil
+			}
 
 			timeParallel = append(timeParallel, time.Since(start).Seconds())
 

@@ -14,9 +14,6 @@ import (
 func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns int, epochNumber int,
 	graph *shared.Graph, rho int, alpha float64, beta float64, tau int, mode string) []*shared.EpochResult {
 
-	// Start clock
-	//start := time.Now()
-
 	// Create a WaitGroup to wait for all goroutines to finish
 	var wg sync.WaitGroup
 
@@ -109,8 +106,13 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 			// Work out workloads for the first time this epoch
 			localGraph.ShardWorkloads = calculateShardWorkloads(localGraph)
 
+			//Start clock
+			start := time.Now()
+
 			// Now that preparation is ready, the actual CLPA can run and the results recorded
 			epochResult := runCLPA(alpha, beta, tau, rho, localGraph, randomGen, mode)
+
+			x := time.Since(start)
 
 			// Add inactive vertices back to graph for the next epoch
 			for id, vertex := range inactiveVertices {
@@ -119,7 +121,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 
 			epochResult.Graph = localGraph
 
-			//epochResult.Duration = x
+			epochResult.Duration = x
 
 			// Send the epoch results for this seed to the results channel
 			results <- epochResult
