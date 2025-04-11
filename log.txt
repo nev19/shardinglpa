@@ -416,3 +416,53 @@
 2025/04/11 10:23:57 Maximum number of cores:  8
 2025/04/11 10:23:57 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
 2025/04/11 10:23:57 Start Test 1/6 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 10:34:53 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 10:34:53 Maximum number of cores:  8
+2025/04/11 10:34:53 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 10:34:53 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 10:35:22 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 10:35:22 Maximum number of cores:  8
+2025/04/11 10:35:22 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 10:35:22 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 10:36:04 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 10:36:04 Maximum number of cores:  8
+2025/04/11 10:36:04 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 10:36:04 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 10:36:50 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 10:36:50 Maximum number of cores:  8
+2025/04/11 10:36:50 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 10:36:50 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 11:05:01 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 11:05:01 Maximum number of cores:  8
+2025/04/11 11:05:01 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 11:05:01 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 11:25:43 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 11:25:43 Maximum number of cores:  8
+2025/04/11 11:25:43 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 11:25:43 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 11:27:07 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 11:27:07 Maximum number of cores:  8
+2025/04/11 11:27:07 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 11:27:07 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 11:27:27 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 11:27:27 Maximum number of cores:  8
+2025/04/11 11:27:27 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 11:27:27 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 11:30:05 here is no of vertices:  11104
+2025/04/11 11:30:05 here is no of inactive vertices:  38632
+2025/04/11 11:46:43 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 11:46:43 Maximum number of cores:  8
+2025/04/11 11:46:43 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 11:46:43 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 11:47:16 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 11:47:16 Maximum number of cores:  8
+2025/04/11 11:47:16 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times
+2025/04/11 11:47:16 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 11:49:39 *********** PROGRAM STARTED *********** (8 Tests in total)
+2025/04/11 11:49:39 Maximum number of cores:  8
+2025/04/11 11:49:39 Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times each test
+2025/04/11 11:49:39 Start Test 1/8 - shards = 8, tx arrival rate = low, full parallel runs
+2025/04/11 12:08:56 Test finished
+2025/04/11 12:08:56 Start Test 2/8 - shards = 8, tx arrival rate = low, half parallel runs
+2025/04/11 12:22:57 Test finished
+2025/04/11 12:22:57 Start Test 3/8 - shards = 8, tx arrival rate = high, full parallel runs

@@ -77,7 +77,8 @@ func main() {
 	log.Println("Maximum number of cores: ", runtime.NumCPU())
 
 	// The number of epochs to be run
-	numberOfEpochs := 30
+	numberOfEpochsLow := 30
+	numberOfEpochsHigh := 12
 
 	// The number of times/threshold each vertex is allowed to update its label (rho)
 	rho := 50
@@ -97,7 +98,7 @@ func main() {
 	arrivalRate := "low"
 
 	// The number of times the experiment is repeated
-	experimentRuns := 50
+	experimentRuns := 1
 
 	// END OF SETUP
 
@@ -108,33 +109,33 @@ func main() {
 	numberOfParallelRuns := int(runtime.NumCPU())
 	halfNumberOfParallelRuns := int(runtime.NumCPU() / 2)
 
-	log.Println("Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times")
+	log.Println("Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times each test")
 
 	numberOfShards = 8
 	arrivalRate = "low"
 
 	//TEST 1
 	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
-	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, numberOfParallelRuns,
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
 
 	//TEST 2
 	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, half parallel runs")
-	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, halfNumberOfParallelRuns,
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsLow, halfNumberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
 
 	arrivalRate = "high"
 	//TEST 3
 	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, full parallel runs")
-	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, numberOfParallelRuns,
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
 
 	//TEST 4
 	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, half parallel runs")
-	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, halfNumberOfParallelRuns,
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsHigh, halfNumberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
 
@@ -142,26 +143,26 @@ func main() {
 	arrivalRate = "low"
 	//TEST 5
 	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = low, full parallel runs")
-	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, numberOfParallelRuns,
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
 
 	//TEST 6
 	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = low, half parallel runs")
-	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, halfNumberOfParallelRuns,
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsLow, halfNumberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
 
 	arrivalRate = "high"
 	//TEST 7
 	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = high, full parallel runs")
-	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, numberOfParallelRuns,
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
 
 	//TEST 8
 	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = high, half parallel runs")
-	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, halfNumberOfParallelRuns,
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsHigh, halfNumberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
 }
@@ -228,7 +229,8 @@ func runTestA(test int, experimentRuns int, numberOfShards int, arrivalRate stri
 func createCSVWriter(filename string) (*csv.Writer, *os.File) {
 
 	// CSV header
-	header := []string{"Run", "Seed", "Epoch", "Fitness", "WorkloadImbalance", "CrossShardWorkload", "ConvergenceIterations", "TimeRan", "beta", "transactionArrivalRate", "numberOfShards"}
+	header := []string{"Run", "Seed", "Epoch", "Fitness", "WorkloadImbalance", "CrossShardWorkload", "ConvergenceIterations", "beta", "transactionArrivalRate", "numberOfShards"}
+	//"TimeRan" is removed
 
 	filePath := fmt.Sprintf("results/%s.csv", filename)
 	file, err := os.Create(filePath)
@@ -301,7 +303,7 @@ func writeResults(groupedResults [][]*shared.EpochResult, writer *csv.Writer, be
 				fmt.Sprintf("%.3f", result.WorkloadImbalance),
 				strconv.Itoa(result.CrossShardWorkload),
 				strconv.Itoa(result.ConvergenceIter),
-				fmt.Sprintf("%.3f", result.Duration.Seconds()),
+				//fmt.Sprintf("%.3f", result.Duration.Seconds()),
 				fmt.Sprintf("%.1f", beta),
 				arrivalRate,
 				strconv.Itoa(numberOfShards),
