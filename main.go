@@ -165,6 +165,8 @@ func main() {
 	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochsHigh, halfNumberOfParallelRuns,
 		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
 	test++
+
+	log.Println("*********** TEST FINISHED, thank you *********** (do not re run as results will be lost!)")
 }
 
 func runTestA(test int, experimentRuns int, numberOfShards int, arrivalRate string, numberOfEpochs int,
