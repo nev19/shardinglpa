@@ -42,7 +42,7 @@ func main() {
 	multi := io.MultiWriter(os.Stdout, f)
 	log.SetOutput(multi)
 
-	log.Println("PROGRAM STARTED ***********")
+	log.Println("*********** PROGRAM STARTED *********** (8 Tests in total)")
 
 	// Set up files
 	writerMylpa, fileMylpa := createCSVWriter("my_LPA")
@@ -68,13 +68,15 @@ func main() {
 	defer testTimesWriter.Flush()
 
 	// Write header
-	if err := testTimesWriter.Write([]string{"test", "run", "epoch", "timeBaseline", "timeNew"}); err != nil {
+	if err := testTimesWriter.Write([]string{"test", "numberOfParallelRuns", "run", "epoch",
+		"timeBaseline", "timeNew"}); err != nil {
 		log.Fatalf("Error writing times_test_A header: %v", err)
 	}
+	// End of time file setup
 
 	log.Println("Maximum number of cores: ", runtime.NumCPU())
 
-	// The number of epochs
+	// The number of epochs to be run
 	numberOfEpochs := 30
 
 	// The number of times/threshold each vertex is allowed to update its label (rho)
@@ -83,8 +85,9 @@ func main() {
 	alpha := 0.5
 
 	// The weight of cross-shard vs workload imbalance - 0 to 1 (beta)
-	beta := 0.2
+	beta := 0.5
 
+	// The number of iterations of CLPA
 	tau := 100
 
 	// The number of shards
@@ -93,7 +96,8 @@ func main() {
 	// The transaction arrival rate
 	arrivalRate := "low"
 
-	experimentRuns := 1
+	// The number of times the experiment is repeated
+	experimentRuns := 50
 
 	// END OF SETUP
 
@@ -101,17 +105,70 @@ func main() {
 
 	test := 1
 
-	log.Println("Start Test Suite A - Test CLPA as in paper vs parallel CLPA for 100 times")
-
 	numberOfParallelRuns := int(runtime.NumCPU())
-	numberOfParallelRuns = 64
+	halfNumberOfParallelRuns := int(runtime.NumCPU() / 2)
 
-	// TEST 1
+	log.Println("Test Suite A - Test CLPA as in paper vs parallel CLPA for 50 times")
+
+	numberOfShards = 8
 	arrivalRate = "low"
-	beta = 0.2
 
-	log.Println("Start Test " + strconv.Itoa(test) + "/ - beta = 0.2, shards = 8, tx arrival rate = low")
+	//TEST 1
+	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, numberOfParallelRuns,
+		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
+	test++
 
+	//TEST 2
+	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, half parallel runs")
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, halfNumberOfParallelRuns,
+		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
+	test++
+
+	arrivalRate = "high"
+	//TEST 3
+	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, full parallel runs")
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, numberOfParallelRuns,
+		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
+	test++
+
+	//TEST 4
+	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, half parallel runs")
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, halfNumberOfParallelRuns,
+		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
+	test++
+
+	numberOfShards = 16
+	arrivalRate = "low"
+	//TEST 5
+	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = low, full parallel runs")
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, numberOfParallelRuns,
+		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
+	test++
+
+	//TEST 6
+	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = low, half parallel runs")
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, halfNumberOfParallelRuns,
+		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
+	test++
+
+	arrivalRate = "high"
+	//TEST 7
+	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = high, full parallel runs")
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, numberOfParallelRuns,
+		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
+	test++
+
+	//TEST 8
+	log.Println("Start Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = high, half parallel runs")
+	runTestA(test, experimentRuns, numberOfShards, arrivalRate, numberOfEpochs, halfNumberOfParallelRuns,
+		rho, alpha, beta, tau, writerPaper, writerPaperParallel, testTimesWriter)
+	test++
+}
+
+func runTestA(test int, experimentRuns int, numberOfShards int, arrivalRate string, numberOfEpochs int,
+	numberOfParallelRuns int, rho int, alpha float64, beta float64, tau int,
+	writerPaper *csv.Writer, writerPaperParallel *csv.Writer, testTimesWriter *csv.Writer) {
 	for run := 1; run <= experimentRuns; run++ {
 
 		var graphSingle *shared.Graph = nil
@@ -142,14 +199,16 @@ func main() {
 			// Parallel CLPA
 			start = time.Now()
 
-			seedsResults := clpaparallel.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
+			seedsResults, inactiveVertices := clpaparallel.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
 				numberOfShards, numberOfParallelRuns, epoch, graphParallel, rho, alpha, beta, tau, "async")
 
 			// Get the best graph from all of the parallel runs
 			graphParallel = getBestGraph(seedsResults)
 
-			for _, result := range seedsResults {
-				result.Graph = nil
+			// Add inactive vertices back to graph for the next epoch
+			// Only the best graph has the vertices added back to save resources
+			for id, vertex := range inactiveVertices {
+				graphParallel.Vertices[id] = vertex
 			}
 
 			timeParallel = append(timeParallel, time.Since(start).Seconds())
@@ -160,171 +219,9 @@ func main() {
 		writeSingleResults(paperclpaResults, writerPaper, beta, numberOfShards, arrivalRate, run)
 		writeResults(paperParallelResults, writerPaperParallel, beta, numberOfShards, arrivalRate, run)
 
-		writeTimes(testTimesWriter, test, run, timeSingle, timeParallel)
+		writeTimes(testTimesWriter, test, run, numberOfParallelRuns, timeSingle, timeParallel)
 	}
 	log.Printf("Test finished")
-	test++
-
-	/*
-
-		//TEST 2
-		beta = 0.5
-
-		log.Println("Start Test " + strconv.Itoa(test) + "/ - beta = 0.5, shards = 8, tx arrival rate = low")
-
-		for run := 1; run <= 100; run++ {
-
-			start := time.Now()
-
-			paperclpaResults := paperclpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/", numberOfShards,
-				numberOfEpochs, rho, 0.5, beta, 100, "async")
-
-			processSingleResults(paperclpaResults, writerPaper, beta, numberOfShards, arrivalRate, run)
-
-			recordTime(testTimesWriter, test, run, time.Since(start).Seconds())
-		}
-		log.Printf("Test finished")
-		test++
-
-		//TEST 3
-		beta = 0.8
-
-		log.Println("Start Test " + strconv.Itoa(test) + "/ - beta = 0.8, shards = 8, tx arrival rate = low")
-
-		for run := 1; run <= 100; run++ {
-
-			start := time.Now()
-
-			paperclpaResults := paperclpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/", numberOfShards,
-				numberOfEpochs, rho, 0.5, beta, 100, "async")
-
-			processSingleResults(paperclpaResults, writerPaper, beta, numberOfShards, arrivalRate, run)
-
-			recordTime(testTimesWriter, test, run, time.Since(start).Seconds())
-		}
-		log.Printf("Test finished")
-		test++
-
-		// TEST 4
-		arrivalRate = "high"
-		beta = 0.2
-
-		log.Println("Start Test " + strconv.Itoa(test) + "/ - beta = 0.2, shards = 8, tx arrival rate = high")
-
-		for run := 1; run <= 100; run++ {
-
-			start := time.Now()
-
-			paperclpaResults := paperclpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/", numberOfShards,
-				numberOfEpochs, rho, 0.5, beta, 100, "async")
-
-			processSingleResults(paperclpaResults, writerPaper, beta, numberOfShards, arrivalRate, run)
-
-			recordTime(testTimesWriter, test, run, time.Since(start).Seconds())
-		}
-		log.Printf("Test finished")
-		test++
-
-		//TEST 5
-		beta = 0.5
-
-		log.Println("Start Test " + strconv.Itoa(test) + "/ - beta = 0.5, shards = 8, tx arrival rate = high")
-
-		for run := 1; run <= 100; run++ {
-
-			start := time.Now()
-
-			paperclpaResults := paperclpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/", numberOfShards,
-				numberOfEpochs, rho, 0.5, beta, 100, "async")
-
-			processSingleResults(paperclpaResults, writerPaper, beta, numberOfShards, arrivalRate, run)
-
-			recordTime(testTimesWriter, test, run, time.Since(start).Seconds())
-		}
-		log.Printf("Test finished")
-		test++
-
-		//TEST 6
-		beta = 0.8
-
-		log.Println("Start Test " + strconv.Itoa(test) + "/ - beta = 0.8, shards = 8, tx arrival rate = high")
-
-		for run := 1; run <= 100; run++ {
-
-			start := time.Now()
-
-			paperclpaResults := paperclpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/", numberOfShards,
-				numberOfEpochs, rho, 0.5, beta, 100, "async")
-
-			processSingleResults(paperclpaResults, writerPaper, beta, numberOfShards, arrivalRate, run)
-
-			recordTime(testTimesWriter, test, run, time.Since(start).Seconds())
-		}
-		log.Printf("Test finished")
-		test++
-	*/
-
-	/*
-
-		log.Println("Start Test 2/ - Test My LPA as in paper for different seeds in parallel")
-		start = time.Now()
-
-		clpaParallelResults := clpaparallel.ShardAllocation("shared/epochs/low_arrival_rate/", numberOfShards,
-			8, numberOfEpochs, rho, 0.5, beta, 100, "async")
-
-		log.Printf("Test ran for %s\n", time.Since(start))
-
-		processResults(clpaParallelResults, writerPaperParallel, beta, numberOfShards)
-
-		// serial time comparison XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-
-			start := time.Now()
-
-			for i := 0; i < 100; i++ {
-				// How to call function: mylpa.ShardAllocation
-				// (datasetDir string, numberOfShards int, numberOfParallelRuns int, numberOfEpochs int, rho int,
-				// alpha float64, beta float64, tau int)
-
-				//rho set to 500 so it does not affect
-				myResults := mylpa.ShardAllocation("shared/epochs/low_arrival_rate/", numberOfShards,
-					100, numberOfEpochs, 500, 0.5, beta, 100)
-
-				processResults(myResults, writerMylpa, beta, numberOfShards)
-			}
-
-			fmt.Printf("\nMy LPA parallel ran for %s\n", time.Since(start))
-	*/
-
-	//BEGIN old TESTS XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	/*
-		start := time.Now()
-
-		runtime.GOMAXPROCS(1)
-		// How to call function: paperclpa.ShardAllocation
-		// (datasetDir string, numberOfShards int, numberOfEpochs int, rho int,
-		// alpha float64, beta float64, tau int, mode string)
-
-		paperclpaResults := paperclpa.ShardAllocation("shared/epochs/low_arrival_rate/", numberOfShards,
-			numberOfEpochs, rho, 0.5, beta, 100, "async")
-
-		fmt.Printf("\nCLPA single ran for %s\n", time.Since(start))
-
-		processSingleResults(paperclpaResults, writerPaper, beta, numberOfShards)
-
-		start = time.Now()
-
-		runtime.GOMAXPROCS(4)
-		// How to call function: clpaparallel.ShardAllocation
-		// (datasetDir string, numberOfShards int, numberOfParallelRuns int, numberOfEpochs int, rho int,
-		// alpha float64, beta float64, tau int, mode string)
-		clpaParallelResults := clpaparallel.ShardAllocation("shared/epochs/low_arrival_rate/", numberOfShards,
-			4, numberOfEpochs, rho, 0.5, beta, 100, "async")
-
-		fmt.Printf("\nCLPA parallel ran for %s\n", time.Since(start))
-
-		processResults(clpaParallelResults, writerPaperParallel, beta, numberOfShards)
-	*/
 }
 
 // createCSVWriter creates a CSV file, writes the header, and returns the CSV writer.
@@ -368,6 +265,8 @@ func getBestGraph(seedResults []*shared.EpochResult) *shared.Graph {
 			//bestSeed = result.Seed
 			bestGraph = result.Graph
 		}
+		// Free up memory by deleting the graphs
+		result.Graph = nil
 	}
 
 	// TESTING
@@ -517,7 +416,8 @@ func extractEpochs() {
 	shared.SplitMultipleDatasets(datasets, "shared/epochs/high_arrival_rate/", 250_000, maxTransactions)
 }
 
-func writeTimes(writer *csv.Writer, test int, run int, timesBaseline []float64, timesNew []float64) {
+func writeTimes(writer *csv.Writer, test int, run int, numberOfParallelRuns int, timesBaseline []float64,
+	timesNew []float64) {
 	if len(timesBaseline) != len(timesNew) {
 		log.Printf("Mismatched slice lengths: baseline=%d, new=%d", len(timesBaseline), len(timesNew))
 		return
@@ -526,6 +426,7 @@ func writeTimes(writer *csv.Writer, test int, run int, timesBaseline []float64, 
 	for i := 0; i < len(timesBaseline); i++ {
 		record := []string{
 			strconv.Itoa(test),
+			strconv.Itoa(numberOfParallelRuns),
 			strconv.Itoa(run),
 			strconv.Itoa(i + 1), // epoch index (1-based)
 			fmt.Sprintf("%.6f", timesBaseline[i]),

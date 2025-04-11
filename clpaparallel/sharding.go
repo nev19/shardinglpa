@@ -12,7 +12,7 @@ import (
 )
 
 func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns int, epochNumber int,
-	graph *shared.Graph, rho int, alpha float64, beta float64, tau int, mode string) []*shared.EpochResult {
+	graph *shared.Graph, rho int, alpha float64, beta float64, tau int, mode string) ([]*shared.EpochResult, map[string]*shared.Vertex) {
 
 	// Create a WaitGroup to wait for all goroutines to finish
 	var wg sync.WaitGroup
@@ -35,7 +35,24 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 	rows, err := shared.ReadCSV(filename)
 	if err != nil {
 		fmt.Printf("Error reading CSV %s: %v\n", filename, err)
-		return nil
+		return nil, nil
+	}
+
+	// Update the graph based on the rows of the current epoch
+	graph = updateGraphFromRows(rows, graph)
+
+	//The following process can be done on the graph before a copy is provided to each go routine:
+	/* inactiveVertices refers to vertices which have no edges in this particular epoch.
+	These will be dealt with by being removed since CLPA should ignore them, and then
+	after CLPA is run, added back to graph. */
+	inactiveVertices := make(map[string]*shared.Vertex)
+	for id, vertex := range graph.Vertices {
+		if len(vertex.Edges) == 0 {
+
+			// Store the vertex in temporary map before removing them from the graph
+			inactiveVertices[id] = vertex
+			delete(graph.Vertices, id)
+		}
 	}
 
 	// Iterate through the runs
@@ -64,64 +81,21 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 			// TESTING
 			//fmt.Println("Start of Epoch ", epochNumber)
 
-			// Deep copy the graph and rows for this goroutine
+			// Deep copy the graph for this goroutine
 			localGraph := deepCopyGraph(graph)
 
 			// Initialise the graph with random shard labels for new vertices
-			localGraph = initialiseGraphFromRows(rows, localGraph, randomGen)
-
-			/* inactiveVertices refers to vertices which have no edges in this particular epoch.
-			These will be dealt with by being removed since CLPA should ignore them, and then
-			after CLPA is run, added back to graph. */
-			inactiveVertices := make(map[string]*shared.Vertex)
-			for id, vertex := range localGraph.Vertices {
-				if len(vertex.Edges) == 0 {
-
-					// Store the vertex in temporary map before removing them from the graph
-					inactiveVertices[id] = vertex
-					delete(localGraph.Vertices, id)
-				}
-			}
-
-			// TESTING - Print the graph for debugging
-			/*
-				// Create a slice to hold the vertex IDs
-				var ids []string
-				for id := range graph.Vertices {
-					ids = append(ids, id)
-				}
-				// Sort the vertex IDs alphabetically
-				sort.Strings(ids)
-				fmt.Println(("\nGraph at start"))
-				for _, id := range ids {
-					vertex := graph.Vertices[id]
-					fmt.Printf("Vertex %s (Shard %d):\n", id, vertex.Label)
-					for neighbour, weight := range vertex.Edges {
-						fmt.Printf("  -> %s (weight %d)\n", neighbour, weight)
-					}
-				}
-			*/
-			// END OF TESTING
+			localGraph = initialiseNewVertices(localGraph, randomGen)
 
 			// Work out workloads for the first time this epoch
 			localGraph.ShardWorkloads = calculateShardWorkloads(localGraph)
 
-			//Start clock
-			start := time.Now()
-
 			// Now that preparation is ready, the actual CLPA can run and the results recorded
 			epochResult := runCLPA(alpha, beta, tau, rho, localGraph, randomGen, mode)
 
-			x := time.Since(start)
-
-			// Add inactive vertices back to graph for the next epoch
-			for id, vertex := range inactiveVertices {
-				localGraph.Vertices[id] = vertex
-			}
-
 			epochResult.Graph = localGraph
 
-			epochResult.Duration = x
+			//epochResult.Duration = x
 
 			// Send the epoch results for this seed to the results channel
 			results <- epochResult
@@ -133,12 +107,14 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 	var mem runtime.MemStats
 	runtime.ReadMemStats(&mem)
 
-	fmt.Println("-------- GC / Memory Stats --------")
-	fmt.Printf("Alloc = %v MiB\n", mem.Alloc/1024/1024)
-	fmt.Printf("TotalAlloc = %v MiB\n", mem.TotalAlloc/1024/1024)
-	fmt.Printf("Sys = %v MiB\n", mem.Sys/1024/1024)
-	fmt.Printf("NumGC = %v\n", mem.NumGC)
-	fmt.Printf("Last GC Pause = %v ms\n", mem.PauseNs[(mem.NumGC+255)%256]/1e6)
+	/*
+		fmt.Println("-------- GC / Memory Stats --------")
+		fmt.Printf("Alloc = %v MiB\n", mem.Alloc/1024/1024)
+		fmt.Printf("TotalAlloc = %v MiB\n", mem.TotalAlloc/1024/1024)
+		fmt.Printf("Sys = %v MiB\n", mem.Sys/1024/1024)
+		fmt.Printf("NumGC = %v\n", mem.NumGC)
+		fmt.Printf("Last GC Pause = %v ms\n", mem.PauseNs[(mem.NumGC+255)%256]/1e6)
+	*/
 
 	close(results)
 
@@ -149,7 +125,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 	}
 
 	// Return the collected results of all the seeds for the epoch
-	return seedsResultsForEpoch
+	return seedsResultsForEpoch, inactiveVertices
 }
 
 func deepCopyGraph(original *shared.Graph) *shared.Graph {
@@ -158,21 +134,14 @@ func deepCopyGraph(original *shared.Graph) *shared.Graph {
 		NumberOfShards: original.NumberOfShards,
 	}
 
-	// Copy vertices without edges first
+	// Copy vertices
 	for id, v := range original.Vertices {
 		copy.Vertices[id] = &shared.Vertex{
 			ID:                 v.ID,
 			Label:              v.Label,
-			Edges:              make(map[string]int),
+			Edges:              v.Edges,
 			LabelUpdateCounter: v.LabelUpdateCounter,
 			NewLabel:           v.NewLabel,
-		}
-	}
-
-	// Now copy edges
-	for id, v := range original.Vertices {
-		for neighborID, weight := range v.Edges {
-			copy.Vertices[id].Edges[neighborID] = weight
 		}
 	}
 

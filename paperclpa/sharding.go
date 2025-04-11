@@ -18,7 +18,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int, gra
 	// TESTING - randomGen = rand.New(rand.NewSource(0))
 
 	// TESTING
-	fmt.Println("Start of Epoch ", epochNumber)
+	//fmt.Println("Start of Epoch ", epochNumber)
 
 	// Create a new graph if it was not passed in to function
 	if graph == nil {
@@ -76,12 +76,8 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int, gra
 	// Work out workloads for the first time this epoch
 	graph.ShardWorkloads = calculateShardWorkloads(graph)
 
-	start := time.Now()
-
 	// Now that preparation is ready, the actual CLPA can run and the results recorded
 	result := runCLPA(alpha, beta, tau, rho, graph, randomGen, mode)
-
-	x := time.Since(start)
 
 	// Add inactive vertices back to graph for the next epoch
 	for id, vertex := range inactiveVertices {
@@ -89,8 +85,6 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int, gra
 	}
 
 	result.Graph = graph
-
-	result.Duration = x
 
 	return result
 
