@@ -2,7 +2,6 @@ package mylpa
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -14,32 +13,63 @@ import (
 Function to perform shard allocation
 
 Inputs:
-the dataset (low or high arrival rate),
-the number of shards,
-the number of parallel runs,
-the number of epochs,
-the number of times/threshold each vertex is allowed to update its label (rho),
+dataset path (for low or high arrival rate dataset),
+number of shards,
+number of current epoch,
+graph from previous epoch,
 the weight of the objectives in the fitness function (alpha),
-the weight of cross-shard vs workload imbalance - 0 to 1 (beta),
-the number of iterations of LPA (tau)
+the weight of cross-shard vs workload imbalance in score function (beta),
+number of iterations of the algorithm (tau),
+number of times/threshold each vertex is allowed to update its label (rho),
+the random seeds to be used for parallel runs
 
 Output:
-The epoch results for each seed
+the epoch results for each separate parallel run,
+the vertices with no transcations in this epoch
 */
-func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns int, numberOfEpochs int,
-	rho int, alpha float64, beta float64, tau int) []shared.SeedResults {
-
-	// Get the random seeds
-	seeds, err := getSeeds("mylpa/seeds.csv", numberOfParallelRuns)
-	if err != nil {
-		log.Fatalf("Failed to load seeds: %v", err)
-	}
+func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int,
+	graph *shared.Graph, alpha float64, beta float64, tau int, rho int, seeds []int64) ([]*shared.EpochResult, map[string]*shared.Vertex) {
 
 	// Create a WaitGroup to wait for all goroutines to finish
 	var wg sync.WaitGroup
 
 	// Buffered channel to collect results from each seed's run
-	results := make(chan shared.SeedResults, numberOfParallelRuns)
+	results := make(chan *shared.EpochResult, len(seeds))
+
+	// Create a new graph if it was not passed in to function
+	if graph == nil {
+		graph = &shared.Graph{
+			Vertices:       make(map[string]*shared.Vertex),
+			NumberOfShards: numberOfShards,
+		}
+	}
+
+	// Generate the filename dynamically based on the epoch value
+	filename := fmt.Sprintf("%sepoch_%d.csv", datasetDir, epochNumber)
+
+	// Load the CSV data once
+	rows, err := shared.ReadCSV(filename)
+	if err != nil {
+		fmt.Printf("Error reading CSV %s: %v\n", filename, err)
+		return nil, nil
+	}
+
+	// Update the graph based on the rows of the current epoch
+	graph = updateGraphFromRows(rows, graph)
+
+	//The following process can be done on the graph before a copy is provided to each go routine:
+	/* inactiveVertices refers to vertices which have no edges in this particular epoch.
+	These will be dealt with by being removed since CLPA should ignore them, and then
+	after CLPA is run, added back to graph. */
+	inactiveVertices := make(map[string]*shared.Vertex)
+	for id, vertex := range graph.Vertices {
+		if len(vertex.Edges) == 0 {
+
+			// Store the vertex in temporary map before removing them from the graph
+			inactiveVertices[id] = vertex
+			delete(graph.Vertices, id)
+		}
+	}
 
 	// Iterate through each seed
 	for _, seed := range seeds {
@@ -47,119 +77,53 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 		// Increment the WaitGroup counter by 1 to track a new goroutine
 		wg.Add(1)
 
-		// Launch a new goroutine to run the task for a specific seed
+		// Launch a new goroutine to run the CLPA for a specific seed
 		go func(seed int64) {
 
 			// Decrease the WaitGroup counter when the goroutine finishes
 			defer wg.Done()
 
-			// TESTING - seed = int64(run)
+			// Use unique random generator for each parallel run
 			randomGen := rand.New(rand.NewSource(seed))
 
-			// Create a new graph
-			graph := &shared.Graph{
-				Vertices:       make(map[string]*shared.Vertex),
-				NumberOfShards: numberOfShards,
-			}
+			// Deep copy the graph for this goroutine
+			localGraph := shared.DeepCopyGraph(graph)
 
-			// Slice to store epoch results for this seed
-			var epochResults []shared.EpochResult
+			// Initialise the graph with random shard labels for new vertices
+			localGraph = initialiseNewVertices(localGraph, randomGen)
 
-			// Iterate over the epochs
-			for epoch := 1; epoch <= numberOfEpochs; epoch++ {
+			// Work out workloads for the first time this epoch
+			localGraph.ShardWorkloads = calculateShardWorkloads(localGraph)
 
-				// TESTING
-				fmt.Println("Start of Epoch ", epoch)
+			// Now that preparation is ready, the actual CLPA can run and the results recorded
+			epochResult := runClpa(alpha, beta, tau, rho, localGraph, randomGen, seed)
 
-				// Start clock
-				//start := time.Now()
+			epochResult.Graph = localGraph
 
-				// Generate the filename dynamically based on the epoch value
-				filename := fmt.Sprintf("%sepoch_%d.csv", datasetDir, epoch)
+			// Send the epoch results for this seed to the results channel
+			results <- epochResult
 
-				// Load the CSV data once per epoch
-				rows, err := shared.ReadCSV(filename)
-				if err != nil {
-					fmt.Printf("Error reading CSV %s: %v\n", filename, err)
-					return
-				}
-
-				// Initialise the graph with random shard labels for new vertices
-				graph := initialiseGraphFromRows(rows, graph, randomGen)
-
-				/* inactiveVertices refers to vertices which have no edges in this particular epoch.
-				These will be dealt with by being removed since CLPA should ignore them, and then
-				after CLPA is run, added back to graph. */
-				inactiveVertices := make(map[string]*shared.Vertex)
-				for id, vertex := range graph.Vertices {
-					if len(vertex.Edges) == 0 {
-
-						// Store the vertex in temporary map before removing them from the graph
-						inactiveVertices[id] = vertex
-						delete(graph.Vertices, id)
-					}
-				}
-
-				// TESTING - Print the graph for debugging
-				/*
-					// Create a slice to hold the vertex IDs
-					var ids []string
-					for id := range graph.Vertices {
-						ids = append(ids, id)
-					}
-					// Sort the vertex IDs alphabetically
-					sort.Strings(ids)
-					fmt.Println(("\nGraph at start"))
-					for _, id := range ids {
-						vertex := graph.Vertices[id]
-						fmt.Printf("Vertex %s (Shard %d):\n", id, vertex.Label)
-						for neighbour, weight := range vertex.Edges {
-							fmt.Printf("  -> %s (weight %d)\n", neighbour, weight)
-						}
-					}
-				*/
-				// END OF TESTING
-
-				// Work out workloads for the first time this epoch
-				graph.ShardWorkloads = calculateShardWorkloads(graph)
-
-				// Now that preparation is ready, the actual CLPA can run and the results recorded
-				result := runClpa(seed, alpha, beta, tau, rho, graph, randomGen)
-
-				// Add inactive vertices back to graph for the next epoch
-				for id, vertex := range inactiveVertices {
-					graph.Vertices[id] = vertex
-				}
-
-				// Add the time program ran
-				//result.Duration = time.Since(start)
-
-				// Append the result for the current epoch to the epochResults slice
-				epochResults = append(epochResults, result)
-			}
-
-			// Send all epoch results for this seed to the results channel as a single SeedResults struct
-			results <- shared.SeedResults{Seed: seed, EpochResult: epochResults}
 		}(seed)
 	}
 
 	// Wait for all Goroutines to finish and close the results channel
 	wg.Wait()
+
 	close(results)
 
-	// Collect results into a slice
-	var groupedResults []shared.SeedResults
-	for i := 0; i < numberOfParallelRuns; i++ {
-		seedResult := <-results
-		groupedResults = append(groupedResults, seedResult)
+	// Collect all the seeds results for the epoch into a slice
+	var seedsResultsForEpoch []*shared.EpochResult
+	for result := range results {
+		seedsResultsForEpoch = append(seedsResultsForEpoch, result)
 	}
 
-	// Return the results
-	return groupedResults
+	// Return the collected results of all the seeds for the epoch
+	return seedsResultsForEpoch, inactiveVertices
 }
 
-func runClpa(seed int64, alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
-	randomGen *rand.Rand) shared.EpochResult {
+// The CLPA function
+func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
+	randomGen *rand.Rand, seed int64) *shared.EpochResult {
 
 	convergenceIter := -1 // Default value if no convergence within iterations
 
@@ -175,8 +139,6 @@ func runClpa(seed int64, alpha float64, beta float64, tau int, rho int, graph *s
 		// Perform an iteration of CLPA
 		clpaIteration(graph, beta, randomGen, rho)
 
-		// TESTING - Check for convergence
-
 		// CLPA iterations should stop once convergence is reached
 		converged := true
 		for id, vertex := range graph.Vertices {
@@ -186,7 +148,7 @@ func runClpa(seed int64, alpha float64, beta float64, tau int, rho int, graph *s
 			}
 		}
 		if converged {
-			// TESTING - fmt.Println("\n\nXXXXXXXXXXXXXXXXXXXXX Converged at iteration (0-based): ", iter)
+
 			// Record the iteration number when convergence occurred (1-based)
 			convergenceIter = iter + 1
 
@@ -196,26 +158,11 @@ func runClpa(seed int64, alpha float64, beta float64, tau int, rho int, graph *s
 
 	}
 
-	// TESTING - print workloads at end
-	/*
-		fmt.Println("\n\nWorkloads at End:")
-
-		// print workload of each shard (from incremental)
-		for shard_id, workload := range graph.ShardWorkloads {
-			fmt.Printf("\nThe shard %v has workload: %v", shard_id, workload)
-		}
-		// print workload of each shard (by rework)
-		fmt.Println("\n\nWORKLOADS by rework")
-		for shard_id, workload := range workloads {
-			fmt.Printf("\nThe shard %v has workload: %v", shard_id, workload)
-		}
-	*/
-
-	// Calculate the workload imabalnce, number of cross shard transactions and fitness of the partitioning
+	// Calculate the workload imbalance, number of cross shard transactions and fitness of the partitioning
 	workloadImbalance, crossShardWorkload, fitness := shared.CalculateFitness(graph, alpha)
 
 	// Return the results of the epoch
-	return shared.EpochResult{
+	return &shared.EpochResult{
 		Seed:               seed,
 		Fitness:            fitness,
 		WorkloadImbalance:  workloadImbalance,
@@ -225,12 +172,8 @@ func runClpa(seed int64, alpha float64, beta float64, tau int, rho int, graph *s
 
 }
 
-// The main CLPA function that iterates through all vertices and assigns shards
+// The function that performs an iteration through all vertices and assigns shards
 func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
-
-	// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
-	// Initialize an array to store fitness values for each iteration
-	//var fitnessValues []float64
 
 	// Get a random order to use for this CLPA iteration
 	sortedVertices := setVerticesOrder(graph, randomGen)
@@ -241,45 +184,17 @@ func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho 
 		// Calculate the score of shards with respect to current vertex
 		scores := calculateScores(graph, vertex, beta)
 
-		// TESTING - PRINT OUT SCORES
-		/*
-			fmt.Println("\nCLPA on VERTEX: ", i, vertex.ID)
-
-			// Dereference and print each value of scores
-			fmt.Print("SCORES for this vertex:")
-			for _, ptr := range scores {
-				if ptr != nil {
-					fmt.Print(" ", *ptr, " ") // Access the value via pointer
-				} else {
-					fmt.Print(" <nil> ")
-				}
-			}
-		*/
-
 		// Get the ID of the best shard with respect to current vertex
 		bestShard := getBestShard(scores, randomGen)
-		//fmt.Println("Winner: ", bestShard)
 
 		// Move current vertex to new best shard
 		moveVertex(graph, vertex, bestShard, rho)
 
-		// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
-		// Calculate fitness and append to the array
-		//_, _, fitness := CalculateFitness(graph, 0.5) // Adjust alpha value as needed
-		//fitnessValues = append(fitnessValues, fitness)
 	}
-
-	/*
-		// Write fitness values to a CSV file
-		err := WriteFitnessToCSV(fitnessValues, "fitness_values.csv")
-		if err != nil {
-			panic(err) // Handle error as needed
-		}
-	*/
 }
 
 // Function to get seeds from file
-func getSeeds(filename string, num int) ([]int64, error) {
+func GetSeeds(filename string, num int) ([]int64, error) {
 
 	// Read the CSV file
 	rows, err := shared.ReadCSV(filename)
@@ -316,16 +231,3 @@ func getSeeds(filename string, num int) ([]int64, error) {
 	// Return the slice of seeds
 	return seeds, nil
 }
-
-// TESTING - Function to generate sequential seeds used to compare with old implementation
-// this is never useful since I compare my implementation (using seeds from file) with their implementation
-// which is totally random (no seeds)
-/*
-func generateSeeds(num int) []int64 {
-	seeds := make([]int64, num)
-	for i := 0; i < num; i++ {
-		seeds[i] = int64(i)
-	}
-	return seeds
-}
-*/

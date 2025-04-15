@@ -211,7 +211,7 @@ func CalculateScoresPaper(graph *shared.Graph, v *shared.Vertex, beta float64) [
 }
 
 // Score function: calculates how much a shard scores with respect to a vertex
-// Calculates Penalty exactly as in paper
+// Calculates Penalty using newly proposed formula
 func CalculateScoresNew(graph *shared.Graph, v *shared.Vertex, beta float64) []*float64 {
 
 	// Find the minimum workload of a shard
@@ -330,27 +330,3 @@ func setVerticesOrder(graph *shared.Graph, randomGen *rand.Rand) []*shared.Verte
 
 	return vertices
 }
-
-/*
-// TESTING - Function to write the fitness values to a CSV file
-func WriteFitnessToCSV(fitnessValues []float64, filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
-
-	// Write the fitness values to the CSV
-	for _, value := range fitnessValues {
-		err := writer.Write([]string{strconv.FormatFloat(value, 'f', 6, 64)})
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-*/

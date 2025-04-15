@@ -52,7 +52,7 @@ func RunTest(runs int) {
 	// The weight of cross-shard vs workload imbalance in fitness calculation
 	alpha := 0.5
 
-	// The weight of cross-shard vs workload imbalance - 0 to 1 (beta)
+	// The weight of cross-shard vs workload imbalance in score function
 	beta := 0.5
 
 	// The number of shards

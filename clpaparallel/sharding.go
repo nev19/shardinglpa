@@ -9,13 +9,31 @@ import (
 	"example.com/shardinglpa/shared"
 )
 
+/*
+Function to perform shard allocation
+
+Inputs:
+dataset path (for low or high arrival rate dataset),
+number of shards,
+number of parallel runs,
+number of current epoch,
+graph from previous epoch,
+the weight of the objectives in the fitness function (alpha),
+the weight of cross-shard vs workload imbalance in score function (beta),
+number of iterations of the algorithm (tau),
+number of times/threshold each vertex is allowed to update its label (rho),
+
+Output:
+the epoch results for each separate parallel run,
+the vertices with no transcations in this epoch
+*/
 func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns int, epochNumber int,
 	graph *shared.Graph, alpha float64, beta float64, tau int, rho int) ([]*shared.EpochResult, map[string]*shared.Vertex) {
 
 	// Create a WaitGroup to wait for all goroutines to finish
 	var wg sync.WaitGroup
 
-	// Buffered channel to collect results from each seed's run
+	// Buffered channel to collect results from each parallel run
 	results := make(chan *shared.EpochResult, numberOfParallelRuns)
 
 	// Create a new graph if it was not passed in to function
@@ -59,28 +77,18 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 		// Increment the WaitGroup counter by 1 to track a new goroutine
 		wg.Add(1)
 
-		// Create a new variable to capture the current loop value avoiding closure capture issues
-		//  in the goroutine below
-		pr := parallelRun
-
-		// Launch a new goroutine to run the task for a specific seed
-		go func() {
+		// Launch a new goroutine to run the CLPA
+		go func(parallelRun int) {
 
 			// Decrease the WaitGroup counter when the goroutine finishes
 			defer wg.Done()
 
-			// Use unique random generator for each thread
-			// run is used as Offset since time may be same on multiple threads
-
-			randomGen := rand.New(rand.NewSource(time.Now().UnixNano() + int64(pr)))
-			// TESTING - randomGen = rand.New(rand.NewSource(0))
-			// TESTING - seed = int64(1)
-
-			// TESTING
-			//fmt.Println("Start of Epoch ", epochNumber)
+			// Use unique random generator for each parallel run
+			// 'run' is used as an offset since time may be same on multiple runs
+			randomGen := rand.New(rand.NewSource(time.Now().UnixNano() + int64(parallelRun)))
 
 			// Deep copy the graph for this goroutine
-			localGraph := deepCopyGraph(graph)
+			localGraph := shared.DeepCopyGraph(graph)
 
 			// Initialise the graph with random shard labels for new vertices
 			localGraph = initialiseNewVertices(localGraph, randomGen)
@@ -93,27 +101,13 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 
 			epochResult.Graph = localGraph
 
-			//epochResult.Duration = x
-
 			// Send the epoch results for this seed to the results channel
 			results <- epochResult
-		}()
+		}(parallelRun)
 	}
 
 	// Wait for all Goroutines to finish and close the results channel
 	wg.Wait()
-	/*
-		var mem runtime.MemStats
-		runtime.ReadMemStats(&mem)
-
-
-			fmt.Println("-------- GC / Memory Stats --------")
-			fmt.Printf("Alloc = %v MiB\n", mem.Alloc/1024/1024)
-			fmt.Printf("TotalAlloc = %v MiB\n", mem.TotalAlloc/1024/1024)
-			fmt.Printf("Sys = %v MiB\n", mem.Sys/1024/1024)
-			fmt.Printf("NumGC = %v\n", mem.NumGC)
-			fmt.Printf("Last GC Pause = %v ms\n", mem.PauseNs[(mem.NumGC+255)%256]/1e6)
-	*/
 
 	close(results)
 
@@ -127,26 +121,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 	return seedsResultsForEpoch, inactiveVertices
 }
 
-func deepCopyGraph(original *shared.Graph) *shared.Graph {
-	copy := &shared.Graph{
-		Vertices:       make(map[string]*shared.Vertex),
-		NumberOfShards: original.NumberOfShards,
-	}
-
-	// Copy vertices
-	for id, v := range original.Vertices {
-		copy.Vertices[id] = &shared.Vertex{
-			ID:                 v.ID,
-			Label:              v.Label,
-			Edges:              v.Edges,
-			LabelUpdateCounter: v.LabelUpdateCounter,
-			NewLabel:           v.NewLabel,
-		}
-	}
-
-	return copy
-}
-
+// The CLPA function
 func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand) *shared.EpochResult {
 
@@ -164,8 +139,6 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 		// Perform an iteration of CLPA
 		clpaIteration(graph, beta, randomGen, rho)
 
-		// TESTING - Check for convergence
-
 		// If convergenceIter is not -1, then it was already found that the algorithm converged
 		// CLPA iterations should still continue, as stipulated in the paper
 		if convergenceIter == -1 {
@@ -177,31 +150,15 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 				}
 			}
 			if converged {
-				// TESTING - fmt.Println("\n\nXXXXXXXXXXXXXXXXXXXXX Converged at iteration (0-based): ", iter)
+
 				// Record the iteration number when convergence occurred (1-based)
 				convergenceIter = iter + 1
-				// TESTING - used to make deterministic: break
 			}
 		}
 
 	}
 
-	// TESTING - print workloads at end
-	/*
-		fmt.Println("\n\nWorkloads at End:")
-
-		// print workload of each shard (from incremental)
-		for shard_id, workload := range graph.ShardWorkloads {
-			fmt.Printf("\nThe shard %v has workload: %v", shard_id, workload)
-		}
-		// print workload of each shard (by rework)
-		fmt.Println("\n\nWORKLOADS by rework")
-		for shard_id, workload := range workloads {
-			fmt.Printf("\nThe shard %v has workload: %v", shard_id, workload)
-		}
-	*/
-
-	// Calculate the workload imabalnce, number of cross shard transactions and fitness of the partitioning
+	// Calculate the workload imbalance, number of cross shard transactions and fitness of the partitioning
 	workloadImbalance, crossShardWorkload, fitness := shared.CalculateFitness(graph, alpha)
 
 	// Return the results of the epoch
@@ -215,7 +172,7 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 
 }
 
-// The main CLPA function that iterates through all vertices and assigns shards
+// The function that performs an iteration through all vertices and assigns shards
 func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
 
 	// Get a random order to use for this CLPA iteration
@@ -227,28 +184,11 @@ func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho 
 		// Calculate the score of shards with respect to current vertex
 		scores := calculateScores(graph, vertex, beta)
 
-		// TESTING - PRINT OUT SCORES
-		/*
-			fmt.Println("\nCLPA on VERTEX: ", i, vertex.ID)
-
-			// Dereference and print each value of scores
-			fmt.Print("SCORES for this vertex:")
-			for _, ptr := range scores {
-				if ptr != nil {
-					fmt.Print(" ", *ptr, " ") // Access the value via pointer
-				} else {
-					fmt.Print(" <nil> ")
-				}
-			}
-		*/
-
 		// Get the ID of the best shard with respect to current vertex
 		bestShard := getBestShard(scores, randomGen)
-		//fmt.Println("Winner: ", bestShard)
 
 		// Move current vertex to new best shard
 		moveVertex(graph, vertex, bestShard, rho)
 
 	}
-
 }

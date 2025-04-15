@@ -29,8 +29,6 @@ func RunTestSuite(runs int) {
 	defer writerTimes.Flush()
 	defer fileTimes.Close()
 
-	//log.Println("Maximum number of cores: ", runtime.NumCPU())
-
 	// The number of epochs to be run
 	numberOfEpochsLow := 30
 	numberOfEpochsHigh := 12
@@ -41,7 +39,7 @@ func RunTestSuite(runs int) {
 	// The weight of cross-shard vs workload imbalance in fitness calculation
 	alpha := 0.5
 
-	// The weight of cross-shard vs workload imbalance - 0 to 1
+	// The weight of cross-shard vs workload imbalance in score function
 	beta := 0.5
 
 	// The number of iterations of CLPA
@@ -68,7 +66,10 @@ func RunTestSuite(runs int) {
 
 	test := 1
 
+	// Set number of parallel runs to maximum number of cores available
 	numberOfParallelRuns := int(runtime.NumCPU())
+
+	// Set number of parallel runs to half the number of cores available
 	halfNumberOfParallelRuns := int(runtime.NumCPU() / 2)
 
 	numberOfShards = 8

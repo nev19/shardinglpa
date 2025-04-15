@@ -12,7 +12,6 @@ import (
 
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
-	"example.com/shardinglpa/tests/penalty"
 )
 
 func main() {
@@ -52,25 +51,45 @@ func main() {
 
 	// Run the Test 'Convergence of CLPA'
 	// This tests the convergence of CLPA when rho is not used to stop label updates for XXXXXXXX times
-	//convergence.RunTest(1)
+	//convergence.RunTest(1 XXXX)
 
-	/* Run the Test Suite 'Paper Penalty vs New Penalty'
-	This tests the performance of the newly proposed penalty compared to the paper's penalty formula
-	for 50 times each test */
-	penalty.RunTestSuite(50)
+	// Run the Test Suite 'Paper Penalty vs New Penalty'
+	// This tests performance of the new penalty compared to the paper's penalty formula for 50 times each test
+	// penalty.RunTestSuite(50)
+
+	// FINAL TEST
+	// CHECK OUT GetSeeds func to see that is working well
+
+	// The number of seeds passed in to the sharding function determines the number of parallel runs
+	/*
+		numberOfParallelRuns := 32
+		nextSeedIndex := 0
+			// Get the random seeds
+			seeds, err := mylpa.GetSeeds("mylpa/seeds.csv", numberOfParallelRuns)
+			if err != nil {
+				log.Fatalf("Failed to load seeds: %v", err)
+			}
+
+			nextSeedIndex += numberOfParallelRuns
+
+			mylpa.ShardAllocation()
+	*/
 
 }
 
 // Function to generate epochs
 func extractEpochs() {
 
+	// Set paths to datasets
 	datasets := []string{
 		"shared/originaldataset/0_to_1_Block_Transactions.csv",
 		"shared/originaldataset/1_to_2_Block_Transactions.csv",
 	}
 
-	maxTransactions := 8_000_000
+	// Set the maximum number of transactions needed
+	maxTransactions := 3_000_000
 
+	// Call functions to split dataset into epochs according to the transaction arrival rate
 	shared.SplitMultipleDatasets(datasets, "shared/epochs/low_arrival_rate/", 100_000, maxTransactions)
 	shared.SplitMultipleDatasets(datasets, "shared/epochs/high_arrival_rate/", 250_000, maxTransactions)
 }
@@ -157,6 +176,7 @@ func writeEpochStatistics(numberOfEpochs int, datasetDir string, outputFilePath 
 
 	}
 
+	// Log success message
 	log.Println("Dataset Statistics written to CSV successfully")
 
 }

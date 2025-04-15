@@ -11,7 +11,7 @@ import (
 )
 
 // Function to initialise the graph from the data
-func initialiseGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *rand.Rand) *shared.Graph {
+func updateGraphFromRows(rows [][]string, graph *shared.Graph) *shared.Graph {
 
 	if len(rows) == 0 {
 		return graph
@@ -54,14 +54,14 @@ func initialiseGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *ra
 		if _, exists := graph.Vertices[from]; !exists {
 			graph.Vertices[from] = &shared.Vertex{
 				ID:    from,
-				Label: randomGen.Intn(graph.NumberOfShards), // Vertex label is initially assigned a random shard
+				Label: -1,
 				Edges: make(map[string]int),
 			}
 		}
 		if _, exists := graph.Vertices[to]; !exists {
 			graph.Vertices[to] = &shared.Vertex{
 				ID:    to,
-				Label: randomGen.Intn(graph.NumberOfShards), // Vertex label is initially assigned a random shard
+				Label: -1,
 				Edges: make(map[string]int),
 			}
 		}
@@ -74,6 +74,27 @@ func initialiseGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *ra
 		}
 	}
 
+	return graph
+}
+
+// Function to set the label of the new vertices in the graph
+func initialiseNewVertices(graph *shared.Graph, randomGen *rand.Rand) *shared.Graph {
+
+	// Collect keys and sort them, necessary to be deterministic
+	keys := make([]string, 0, len(graph.Vertices))
+	for k := range graph.Vertices {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	// Assign random shards to each new vertex
+	for _, k := range keys {
+		vertex := graph.Vertices[k]
+		if vertex.Label == -1 {
+			vertex.Label = randomGen.Intn(graph.NumberOfShards)
+			vertex.LabelUpdateCounter = 0
+		}
+	}
 	return graph
 }
 
@@ -255,27 +276,3 @@ func setVerticesOrder(graph *shared.Graph, randomGen *rand.Rand) []*shared.Verte
 
 	return vertices
 }
-
-/*
-// TESTING - Function to write the fitness values to a CSV file
-func WriteFitnessToCSV(fitnessValues []float64, filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	writer := csv.NewWriter(file)
-	defer writer.Flush()
-
-	// Write the fitness values to the CSV
-	for _, value := range fitnessValues {
-		err := writer.Write([]string{strconv.FormatFloat(value, 'f', 6, 64)})
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-*/

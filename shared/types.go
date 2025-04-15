@@ -29,8 +29,10 @@ type EpochResult struct {
 }
 
 // OLD Struct to hold the result of a single simulation run (per epoch)
+/*
 type SeedResults struct {
 	Seed        int64
 	Graph       *Graph
 	EpochResult []EpochResult
 }
+*/

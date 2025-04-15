@@ -8,6 +8,25 @@ import (
 	"example.com/shardinglpa/shared"
 )
 
+/*
+Function to perform shard allocation
+
+Inputs:
+dataset path (for low or high arrival rate dataset),
+number of shards,
+number of current epoch,
+graph from previous epoch,
+the weight of the objectives in the fitness function (alpha),
+the weight of cross-shard vs workload imbalance in score function (beta),
+number of iterations of the algorithm (tau),
+number of times/threshold each vertex is allowed to update its label (rho),
+function call to run CLPA iteration (decides updating mode)
+function call to run CLPA (decides convergence mode)
+function call to run scoring function (decides penalty formula)
+
+Output:
+the epoch results
+*/
 func ShardAllocation(datasetDir string, shards int, epoch int, graph *shared.Graph, alpha float64, beta float64,
 	tau int, rho int, runClpaIter ClpaIterationMode, clpaCall ClpaCall, scoringPenalty ScoringPenalty) *shared.EpochResult {
 
@@ -69,6 +88,7 @@ func ShardAllocation(datasetDir string, shards int, epoch int, graph *shared.Gra
 
 }
 
+// The CLPA function that continues iterations for all tau iterations irrespective of convergence
 func RunClpaPaper(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult {
 
@@ -104,7 +124,7 @@ func RunClpaPaper(alpha float64, beta float64, tau int, rho int, graph *shared.G
 		}
 	}
 
-	// Calculate the workload imabalnce, number of cross shard transactions and fitness of the partitioning
+	// Calculate the workload imbalance, number of cross shard transactions and fitness of the partitioning
 	workloadImbalance, crossShardWorkload, fitness := shared.CalculateFitness(graph, alpha)
 
 	// Return the results of the epoch
@@ -118,6 +138,7 @@ func RunClpaPaper(alpha float64, beta float64, tau int, rho int, graph *shared.G
 
 }
 
+// The CLPA function that stops iterations upon convergence
 func RunClpaConvergenceStop(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult {
 
@@ -153,7 +174,7 @@ func RunClpaConvergenceStop(alpha float64, beta float64, tau int, rho int, graph
 		}
 	}
 
-	// Calculate the workload imabalnce, number of cross shard transactions and fitness of the partitioning
+	// Calculate the workload imbalance, number of cross shard transactions and fitness of the partitioning
 	workloadImbalance, crossShardWorkload, fitness := shared.CalculateFitness(graph, alpha)
 
 	// Return the results of the epoch
@@ -167,6 +188,7 @@ func RunClpaConvergenceStop(alpha float64, beta float64, tau int, rho int, graph
 
 }
 
+// The CLPA function that tests convergence behaviour
 func RunClpaConvergenceTest(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult {
 
@@ -200,7 +222,7 @@ func RunClpaConvergenceTest(alpha float64, beta float64, tau int, rho int, graph
 	}
 }
 
-// The main CLPA function that iterates through all vertices and assigns shards
+// The function that performs an iteration through all vertices and assigns shards
 func ClpaIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	rho int, scoringPenalty ScoringPenalty) {
 
@@ -254,7 +276,7 @@ func ClpaIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	*/
 }
 
-// Alternative method for CLPA iteration with sync mode of updating instead of async
+// Alternative function for a CLPA iteration with sync mode of updating instead of async
 func ClpaIterationSync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	rho int, scoringPenalty ScoringPenalty) {
 

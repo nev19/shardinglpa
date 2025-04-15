@@ -12,7 +12,7 @@ import (
 )
 
 func RunTestSuite(runs int) {
-	log.Println("*********** TEST SUITE 'Paper Penalty vs New Penalty' STARTED *********** (5 Tests in total)")
+	log.Println("*********** TEST SUITE 'Paper Penalty vs New Penalty' STARTED *********** (10 Tests in total)")
 
 	writerPaperPen, filePaperPen := tests.CreateResultsWriter("penalty/paper_penalty")
 	defer writerPaperPen.Flush()
@@ -35,7 +35,7 @@ func RunTestSuite(runs int) {
 	// The weight of cross-shard vs workload imbalance in fitness calculation
 	alpha := 0.5
 
-	// The weight of cross-shard vs workload imbalance - 0 to 1
+	// The weight of cross-shard vs workload imbalance in score function
 	beta := 0.1
 
 	// The number of iterations of CLPA
@@ -56,10 +56,11 @@ func RunTestSuite(runs int) {
 
 	test := 1
 
+	numberOfShards = 8
 	beta = 0.1
 
 	//TEST 1
-	log.Println("Started Test " + strconv.Itoa(test) + "/5 - beta = 0.1")
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.1, shards = 8")
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
 	test++
@@ -67,7 +68,7 @@ func RunTestSuite(runs int) {
 	beta = 0.3
 
 	//TEST 2
-	log.Println("Started Test " + strconv.Itoa(test) + "/5 - beta = 0.3")
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.3, shards = 8")
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
 	test++
@@ -75,7 +76,7 @@ func RunTestSuite(runs int) {
 	beta = 0.5
 
 	//TEST 3
-	log.Println("Started Test " + strconv.Itoa(test) + "/5 - beta = 0.5")
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.5, shards = 8")
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
 	test++
@@ -83,7 +84,7 @@ func RunTestSuite(runs int) {
 	beta = 0.7
 
 	//TEST 4
-	log.Println("Started Test " + strconv.Itoa(test) + "/5 - beta = 0.7")
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.7, shards = 8")
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
 	test++
@@ -91,7 +92,48 @@ func RunTestSuite(runs int) {
 	beta = 0.9
 
 	//TEST 5
-	log.Println("Started Test " + strconv.Itoa(test) + "/5 - beta = 0.9")
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.9, shards = 8")
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
+	test++
+
+	numberOfShards = 16
+	beta = 0.1
+
+	//TEST 6
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.1, shards = 16")
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
+	test++
+
+	beta = 0.3
+
+	//TEST 7
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.3, shards = 16")
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
+	test++
+
+	beta = 0.5
+
+	//TEST 8
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.5, shards = 16")
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
+	test++
+
+	beta = 0.7
+
+	//TEST 9
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.7, shards = 16")
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
+	test++
+
+	beta = 0.9
+
+	//TEST 10
+	log.Println("Started Test " + strconv.Itoa(test) + "/10 - beta = 0.9, shards = 16")
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes)
 	test++
@@ -138,12 +180,12 @@ func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs 
 			timePaperPen = append(timePaperPen, time.Since(start).Seconds())
 			paperPenResults = append(paperPenResults, epochResult)
 
-			// New Penalty and early break
+			// New Penalty and stop on convergence enabled
 
 			// Set CLPA scoring penalty to be the newly proposed penalty formula
 			scoringPenalty = paperclpa.CalculateScoresNew
 
-			// Set CLPA to be called with 'stop on convergence' set to on, so early stopping is enabled
+			// Set CLPA to be called with 'stop on convergence' set to on
 			clpaCall = paperclpa.RunClpaConvergenceStop
 
 			// Start timer
