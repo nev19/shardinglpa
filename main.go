@@ -10,10 +10,9 @@ import (
 	"strconv"
 	"time"
 
-	"example.com/shardinglpa/clpaparallel"
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
-	"example.com/shardinglpa/tests"
+	"example.com/shardinglpa/tests/penalty"
 )
 
 func main() {
@@ -41,148 +40,25 @@ func main() {
 		}()
 	*/
 
+	// The following section runs different tests, for the amount of times passed in to the function
+
 	// Run the Test Suite 'CLPA vs Concurrent CLPA'
 	// This tests CLPA as in paper vs parallel CLPA for 50 times each test
-	//concurrent.RunTestSuite()
+	//concurrent.RunTestSuite(50)
 
 	// Run the Test 'Update Mode of CLPA'
-	// This tests async vs sync update modes of CLPA 50 times
-	//updatemode.RunTest()
+	// This tests async vs sync update modes of CLPA for 20 times
+	//updatemode.RunTest(20)
 
 	// Run the Test 'Convergence of CLPA'
-	// This tests the convergence of CLPA when rho is not used to stop label updates XXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	//convergence.RunTest()
+	// This tests the convergence of CLPA when rho is not used to stop label updates for XXXXXXXX times
+	//convergence.RunTest(1)
 
-	/*
-		log.Println("*********** TEST SUITE 'Paper's Penalty vs New Penalty' STARTED *********** (3 Tests in total)")
+	/* Run the Test Suite 'Paper Penalty vs New Penalty'
+	This tests the performance of the newly proposed penalty compared to the paper's penalty formula
+	for 50 times each test */
+	penalty.RunTestSuite(50)
 
-		writerPaper, filePaper := tests.CreateResultsWriter("concurrent/paper_CLPA")
-		defer writerPaper.Flush()
-		defer filePaper.Close()
-
-		writerPaperParallel, filePaperParallel := tests.CreateResultsWriter("concurrent/paper_CLPA_parallel")
-		defer writerPaperParallel.Flush()
-		defer filePaperParallel.Close()
-
-		writerTimes, fileTimes := tests.CreateTimesWriter("concurrent/test_times")
-		defer writerTimes.Flush()
-		defer fileTimes.Close()
-
-		// The number of epochs to be run
-		numberOfEpochs := 30
-
-		// The number of times/threshold each vertex is allowed to update its label (rho)
-		rho := 50
-
-		// The weight of cross-shard vs workload imbalance in fitness calculation
-		alpha := 0.5
-
-		// The weight of cross-shard vs workload imbalance - 0 to 1
-		beta := 0.5
-
-		// The number of iterations of CLPA
-		tau := 100
-
-		// The number of shards
-		numberOfShards := 8
-
-		// The transaction arrival rate
-		arrivalRate := "low"
-
-		// The number of times the experiment is repeated
-		runs := 50
-
-		// Set CLPA iteration call to be made with update mode set to async
-		var runClpaIter paperclpa.ClpaIterationMode = paperclpa.ClpaIterationAsync
-
-		// Set CLPA to be called with 'stop on convergence' set to off, as in paper
-		var clpaCall paperclpa.ClpaCall = paperclpa.RunClpaPaper
-
-		// Set CLPA scoring penalty to be same as the one in the paper
-		var scoringPenalty paperclpa.ScoringPenalty = paperclpa.CalculateScoresPaper
-
-		// END OF SETUP
-
-		// NOW FOR THE TESTS:
-
-		test := 1
-
-		numberOfParallelRuns := int(runtime.NumCPU())
-		halfNumberOfParallelRuns := int(runtime.NumCPU() / 2)
-
-		log.Println("Test Suite 'CLPA vs Concurrent CLPA' - Test CLPA as in paper vs parallel CLPA for 50 times each test")
-
-		numberOfShards = 8
-		arrivalRate = "low"
-
-		//TEST 1
-		log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
-		runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
-			tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
-		test++
-
-		log.Println("*********** TEST SUITE 'CLPA vs Concurrent CLPA' FINISHED ***********")
-	*/
-}
-
-func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs int, parallelRuns int,
-	alpha float64, beta float64, tau int, rho int, runClpaIter paperclpa.ClpaIterationMode, clpaCall paperclpa.ClpaCall,
-	scoringPenalty paperclpa.ScoringPenalty, writerPaper *csv.Writer, writerPaperParallel *csv.Writer, testTimesWriter *csv.Writer) {
-
-	for run := 1; run <= runs; run++ {
-
-		var graphSingle *shared.Graph = nil
-		var graphParallel *shared.Graph = nil
-
-		var timeSingle []float64
-		var timeParallel []float64
-
-		var paperclpaResults []*shared.EpochResult
-		var paperParallelResults [][]*shared.EpochResult
-
-		// Iterate over the epochs
-		for epoch := 1; epoch <= numberOfEpochs; epoch++ {
-
-			// CLPA as in paper
-			start := time.Now()
-
-			epochResult := paperclpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
-				shards, epoch, graphSingle, alpha, beta, tau, rho, runClpaIter, clpaCall, scoringPenalty)
-
-			// Carry the graph forward for the next epoch
-			graphSingle = epochResult.Graph
-
-			timeSingle = append(timeSingle, time.Since(start).Seconds())
-
-			// Append the result for the current epoch to the epochResults slice
-			paperclpaResults = append(paperclpaResults, epochResult)
-
-			// Parallel CLPA
-			start = time.Now()
-
-			seedsResults, inactiveVertices := clpaparallel.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
-				shards, parallelRuns, epoch, graphParallel, alpha, beta, tau, rho)
-
-			// Get the best graph from all of the parallel runs
-			graphParallel = tests.GetBestGraph(seedsResults)
-
-			// Add inactive vertices back to graph for the next epoch
-			// Only the best graph has the vertices added back to save resources
-			for id, vertex := range inactiveVertices {
-				graphParallel.Vertices[id] = vertex
-			}
-
-			timeParallel = append(timeParallel, time.Since(start).Seconds())
-
-			paperParallelResults = append(paperParallelResults, seedsResults)
-
-		}
-		tests.WriteSingleResults(paperclpaResults, writerPaper, test, run)
-		tests.WriteResults(paperParallelResults, writerPaperParallel, test, run)
-
-		tests.WriteTimes(testTimesWriter, test, run, timeSingle, timeParallel)
-	}
-	log.Printf("Test finished")
 }
 
 // Function to generate epochs

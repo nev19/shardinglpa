@@ -8,7 +8,7 @@ import (
 	"example.com/shardinglpa/tests"
 )
 
-func RunTest() {
+func RunTest(runs int) {
 
 	log.Println("*********** TEST SUITE 'Update Mode of CLPA' STARTED ***********")
 
@@ -41,16 +41,11 @@ func RunTest() {
 	// The transaction arrival rate
 	arrivalRate := "low"
 
-	// The number of times the experiment is repeated
-	runs := 10
-
 	// END OF SETUP
 
 	// NOW FOR THE TEST:
 
 	test := 1
-
-	log.Println("'Update Mode Testing' - Test async vs sync update modes of CLPA 50 times")
 
 	// Set CLPA to be called with 'stop on convergence' set to off, as in paper
 	var clpaCall paperclpa.ClpaCall = paperclpa.RunClpaPaper

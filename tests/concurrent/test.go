@@ -13,7 +13,7 @@ import (
 	"example.com/shardinglpa/tests"
 )
 
-func RunTestSuite() {
+func RunTestSuite(runs int) {
 
 	log.Println("*********** TEST SUITE 'CLPA vs Concurrent CLPA' STARTED *********** (8 Tests in total)")
 
@@ -53,9 +53,6 @@ func RunTestSuite() {
 	// The transaction arrival rate
 	arrivalRate := "low"
 
-	// The number of times the experiment is repeated
-	runs := 50
-
 	// Set CLPA iteration call to be made with update mode set to async
 	var runClpaIter paperclpa.ClpaIterationMode = paperclpa.ClpaIterationAsync
 
@@ -73,8 +70,6 @@ func RunTestSuite() {
 
 	numberOfParallelRuns := int(runtime.NumCPU())
 	halfNumberOfParallelRuns := int(runtime.NumCPU() / 2)
-
-	log.Println("Test Suite 'CLPA vs Concurrent CLPA' - Test CLPA as in paper vs parallel CLPA for 50 times each test")
 
 	numberOfShards = 8
 	arrivalRate = "low"
@@ -136,7 +131,7 @@ func RunTestSuite() {
 
 func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs int, parallelRuns int,
 	alpha float64, beta float64, tau int, rho int, runClpaIter paperclpa.ClpaIterationMode, clpaCall paperclpa.ClpaCall,
-	scoringPenalty paperclpa.ScoringPenalty, writerPaper *csv.Writer, writerPaperParallel *csv.Writer, testTimesWriter *csv.Writer) {
+	scoringPenalty paperclpa.ScoringPenalty, writerPaper *csv.Writer, writerPaperParallel *csv.Writer, writerTimes *csv.Writer) {
 
 	for run := 1; run <= runs; run++ {
 
@@ -161,9 +156,8 @@ func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs 
 			// Carry the graph forward for the next epoch
 			graphSingle = epochResult.Graph
 
+			// Append the time and epoch results to the slices
 			timeSingle = append(timeSingle, time.Since(start).Seconds())
-
-			// Append the result for the current epoch to the epochResults slice
 			paperclpaResults = append(paperclpaResults, epochResult)
 
 			// Parallel CLPA
@@ -181,15 +175,15 @@ func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs 
 				graphParallel.Vertices[id] = vertex
 			}
 
+			// Append the time and epoch results to the slices
 			timeParallel = append(timeParallel, time.Since(start).Seconds())
-
 			paperParallelResults = append(paperParallelResults, seedsResults)
 
 		}
 		tests.WriteSingleResults(paperclpaResults, writerPaper, test, run)
 		tests.WriteResults(paperParallelResults, writerPaperParallel, test, run)
 
-		tests.WriteTimes(testTimesWriter, test, run, timeSingle, timeParallel)
+		tests.WriteTimes(writerTimes, test, run, timeSingle, timeParallel)
 	}
 	log.Printf("Test finished")
 	//memStat()
