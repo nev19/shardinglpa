@@ -3,16 +3,16 @@ package shared
 import "math"
 
 func calculateWorkloadImbalance(graph *Graph) float64 {
-	// Step 1: Calculate the total workload
+	// Calculate the total workload
 	totalWorkload := 0
 	for _, workload := range graph.ShardWorkloads {
 		totalWorkload += workload
 	}
 
-	// Step 2: Calculate the average workload
+	// Calculate the average workload
 	averageWorkload := float64(totalWorkload) / float64(len(graph.ShardWorkloads))
 
-	// Step 3: Find the maximum difference between a shard's workload and the average
+	// Find the maximum difference between a shard's workload and the average
 	maxDifference := 0.0
 	for _, workload := range graph.ShardWorkloads {
 		difference := math.Abs(float64(workload) - averageWorkload)
@@ -21,7 +21,7 @@ func calculateWorkloadImbalance(graph *Graph) float64 {
 		}
 	}
 
-	// Step 4: Return the maximum difference
+	// Return the maximum difference
 	return maxDifference
 }
 
@@ -45,13 +45,13 @@ func calculateCrossShardWorkload(graph *Graph) int {
 }
 
 func CalculateFitness(graph *Graph, alpha float64) (float64, int, float64) {
-	// Step 1: Calculate workload imbalance
+	// Calculate workload imbalance
 	workloadImbalance := calculateWorkloadImbalance(graph)
 
-	// Step 2: Calculate cross-shard workload
+	// Calculate cross-shard workload
 	crossShardWorkload := calculateCrossShardWorkload(graph)
 
-	// Step 3: Compute fitness
+	// Compute fitness
 	fitness := alpha*float64(crossShardWorkload) + (1-alpha)*workloadImbalance
 
 	return workloadImbalance, crossShardWorkload, fitness

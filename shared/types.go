@@ -1,9 +1,5 @@
 package shared
 
-import (
-	"time"
-)
-
 // Define the Vertex structure - this represents an account
 type Vertex struct {
 	ID                 string         // Address of the vertex used as unique identifier
@@ -26,9 +22,10 @@ type EpochResult struct {
 	Fitness            float64 // The fitness score
 	WorkloadImbalance  float64
 	CrossShardWorkload int
-	ConvergenceIter    int           // -1 if no convergence, otherwise the iteration number
-	Duration           time.Duration // The time program ran
-	Graph              *Graph
+	ConvergenceIter    int // -1 if no convergence, otherwise the iteration number
+	//Duration           time.Duration // The time epoch ran for UNUSED
+	Graph        *Graph
+	LabelChanged []bool // Used only in convergence test
 }
 
 // OLD Struct to hold the result of a single simulation run (per epoch)

@@ -2,15 +2,14 @@ package paperclpa
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
 	"example.com/shardinglpa/shared"
 )
 
-func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int, graph *shared.Graph,
-	rho int, alpha float64, beta float64, tau int, mode string) *shared.EpochResult {
+func ShardAllocation(datasetDir string, shards int, epoch int, graph *shared.Graph, alpha float64, beta float64,
+	tau int, rho int, runClpaIter ClpaIterationMode, clpaCall ClpaCall, scoringPenalty ScoringPenalty) *shared.EpochResult {
 
 	// Prepare rand
 	randomGen := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -24,12 +23,12 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int, gra
 	if graph == nil {
 		graph = &shared.Graph{
 			Vertices:       make(map[string]*shared.Vertex),
-			NumberOfShards: numberOfShards,
+			NumberOfShards: shards,
 		}
 	}
 
 	// Generate the filename dynamically based on the epoch value
-	filename := fmt.Sprintf("%sepoch_%d.csv", datasetDir, epochNumber)
+	filename := fmt.Sprintf("%sepoch_%d.csv", datasetDir, epoch)
 
 	// Load the CSV data once per epoch
 	rows, err := shared.ReadCSV(filename)
@@ -53,31 +52,11 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int, gra
 		}
 	}
 
-	// TESTING - Print the graph for debugging
-	/*
-		// Create a slice to hold the vertex IDs
-		var ids []string
-		for id := range graph.Vertices {
-			ids = append(ids, id)
-		}
-		// Sort the vertex IDs alphabetically
-		sort.Strings(ids)
-		fmt.Println(("\nGraph at start"))
-		for _, id := range ids {
-			vertex := graph.Vertices[id]
-			fmt.Printf("Vertex %s (Shard %d):\n", id, vertex.Label)
-			for neighbour, weight := range vertex.Edges {
-				fmt.Printf("  -> %s (weight %d)\n", neighbour, weight)
-			}
-		}
-	*/
-	// END OF TESTING
-
 	// Work out workloads for the first time this epoch
 	graph.ShardWorkloads = calculateShardWorkloads(graph)
 
 	// Now that preparation is ready, the actual CLPA can run and the results recorded
-	result := runCLPA(alpha, beta, tau, rho, graph, randomGen, mode)
+	result := clpaCall(alpha, beta, tau, rho, graph, randomGen, runClpaIter, scoringPenalty)
 
 	// Add inactive vertices back to graph for the next epoch
 	for id, vertex := range inactiveVertices {
@@ -90,10 +69,10 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int, gra
 
 }
 
-func runCLPA(alpha, beta float64, tau int, rho int, graph *shared.Graph,
-	randomGen *rand.Rand, mode string) *shared.EpochResult {
+func RunClpaPaper(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
+	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult {
 
-	convergenceIter := -1 // Default value if no convergence
+	convergenceIter := -1 // Default value if no convergence within iterations
 
 	// Carry out CLPA iterations
 	for iter := 0; iter < tau; iter++ {
@@ -105,23 +84,7 @@ func runCLPA(alpha, beta float64, tau int, rho int, graph *shared.Graph,
 		}
 
 		// Perform an iteration of CLPA according to the mode (sync or async)
-		if mode == "async" {
-			clpaIterationAsync(graph, beta, randomGen, rho)
-		} else if mode == "sync" {
-			clpaIterationSync(graph, beta, randomGen, rho)
-		} else {
-			log.Printf("Invalid mode: '%s'. Must be 'sync' or 'async'.\n", mode)
-			return &shared.EpochResult{
-				Seed:            -1,
-				Fitness:         -1,
-				ConvergenceIter: -1,
-			}
-		}
-
-		// TESTING - Call CLPA in sync mode
-		//CLPAIterationSync(graph, beta, randomGen, rho)
-
-		// TESTING - Check for convergence
+		runClpaIter(graph, beta, randomGen, rho, scoringPenalty)
 
 		// If convergenceIter is not -1, then it was already found that the algorithm converged
 		// CLPA iterations should still continue, as stipulated in the paper
@@ -134,31 +97,17 @@ func runCLPA(alpha, beta float64, tau int, rho int, graph *shared.Graph,
 				}
 			}
 			if converged {
-				// TESTING - fmt.Println("\n\nXXXXXXXXXXXXXXXXXXXXX Converged at iteration (0-based): ", iter)
+
 				// Record the iteration number when convergence occurred (1-based)
 				convergenceIter = iter + 1
-				// TESTING - used to make deterministic: break
 			}
 		}
-
 	}
 
-	// TESTING - print workloads at end
-	/*
-		fmt.Println("\n\nWorkloads at End:")
-
-		// print workload of each shard (from incremental)
-		for shard_id, workload := range graph.ShardWorkloads {
-			fmt.Printf("\nThe shard %v has workload: %v", shard_id, workload)
-		}
-		// print workload of each shard (by rework)
-		fmt.Println("\n\nWORKLOADS by rework")
-		for shard_id, workload := range workloads {
-			fmt.Printf("\nThe shard %v has workload: %v", shard_id, workload)
-		}
-	*/
-
+	// Calculate the workload imabalnce, number of cross shard transactions and fitness of the partitioning
 	workloadImbalance, crossShardWorkload, fitness := shared.CalculateFitness(graph, alpha)
+
+	// Return the results of the epoch
 	return &shared.EpochResult{
 		Seed:               -1,
 		Fitness:            fitness,
@@ -167,4 +116,168 @@ func runCLPA(alpha, beta float64, tau int, rho int, graph *shared.Graph,
 		ConvergenceIter:    convergenceIter,
 	}
 
+}
+
+func RunClpaConvergenceStop(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
+	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult {
+
+	convergenceIter := -1 // Default value if no convergence within iterations
+
+	// Carry out CLPA iterations
+	for iter := 0; iter < tau; iter++ {
+
+		// create a map with all old labels - meaning labels of vertices before current CLPA iteration
+		oldLabels := make(map[string]int)
+		for id, vertex := range graph.Vertices {
+			oldLabels[id] = vertex.Label
+		}
+
+		// Perform an iteration of CLPA according to the mode (sync or async)
+		runClpaIter(graph, beta, randomGen, rho, scoringPenalty)
+
+		// CLPA iterations should stop once convergence is reached
+		converged := true
+		for id, vertex := range graph.Vertices {
+			if oldLabels[id] != vertex.Label {
+				converged = false
+				break
+			}
+		}
+		if converged {
+
+			// Record the iteration number when convergence occurred (1-based)
+			convergenceIter = iter + 1
+
+			// Stop CLPA iterations in case of convergence
+			break
+		}
+	}
+
+	// Calculate the workload imabalnce, number of cross shard transactions and fitness of the partitioning
+	workloadImbalance, crossShardWorkload, fitness := shared.CalculateFitness(graph, alpha)
+
+	// Return the results of the epoch
+	return &shared.EpochResult{
+		Seed:               -1,
+		Fitness:            fitness,
+		WorkloadImbalance:  workloadImbalance,
+		CrossShardWorkload: crossShardWorkload,
+		ConvergenceIter:    convergenceIter,
+	}
+
+}
+
+func RunClpaConvergenceTest(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
+	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult {
+
+	// Create slice to store boolean indicating whether a vertex changed label or not
+	// By default all values are false in the beginning
+	labelChanged := make([]bool, tau)
+
+	// Carry out CLPA iterations
+	for iter := 0; iter < tau; iter++ {
+
+		// create a map with all old labels - meaning labels of vertices before current CLPA iteration
+		oldLabels := make(map[string]int)
+		for id, vertex := range graph.Vertices {
+			oldLabels[id] = vertex.Label
+		}
+
+		// Perform an iteration of CLPA according to the mode (sync or async)
+		runClpaIter(graph, beta, randomGen, rho, scoringPenalty)
+
+		for id, vertex := range graph.Vertices {
+			if oldLabels[id] != vertex.Label {
+				labelChanged[iter] = true
+				break
+			}
+		}
+	}
+
+	// Return only the slice showing whether any label changed at each iteration
+	return &shared.EpochResult{
+		LabelChanged: labelChanged,
+	}
+}
+
+// The main CLPA function that iterates through all vertices and assigns shards
+func ClpaIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
+	rho int, scoringPenalty ScoringPenalty) {
+
+	// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
+	// Initialise an array to store fitness values for each iteration
+	//var fitnessValues []float64
+
+	// Get a random order to use for this CLPA iteration
+	sortedVertices := setVerticesOrder(graph, randomGen)
+
+	// Iterate through each vertex in some order
+	for _, vertex := range sortedVertices {
+
+		// Calculate the score of shards with respect to current vertex
+		scores := scoringPenalty(graph, vertex, beta)
+
+		// TESTING - PRINT OUT SCORES
+		/*
+			fmt.Println("\nCLPA on VERTEX: ", i, vertex.ID)
+
+			// Dereference and print each value of scores
+			fmt.Print("SCORES for this vertex:")
+			for _, ptr := range scores {
+				if ptr != nil {
+					fmt.Print(" ", *ptr, " ") // Access the value via pointer
+				} else {
+					fmt.Print(" <nil> ")
+				}
+			}
+		*/
+
+		// Get the ID of the best shard with respect to current vertex
+		bestShard := getBestShard(scores, randomGen)
+		//fmt.Println("Winner: ", bestShard)
+
+		// Move current vertex to new best shard
+		moveVertex(graph, vertex, bestShard, rho)
+
+		// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
+		// Calculate fitness and append to the array
+		//_, _, fitness := CalculateFitness(graph, 0.5) // Adjust alpha value as needed
+		//fitnessValues = append(fitnessValues, fitness)
+	}
+
+	/*
+		// Write fitness values to a CSV file
+		err := WriteFitnessToCSV(fitnessValues, "fitness_values.csv")
+		if err != nil {
+			panic(err) // Handle error as needed
+		}
+	*/
+}
+
+// Alternative method for CLPA iteration with sync mode of updating instead of async
+func ClpaIterationSync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
+	rho int, scoringPenalty ScoringPenalty) {
+
+	// Get a random order to use for this CLPA iteration
+	sortedVertices := setVerticesOrder(graph, randomGen)
+
+	// Iterate through each vertex in some order
+	for _, vertex := range sortedVertices {
+
+		// Calculate the score of shards with respect to current vertex
+		scores := scoringPenalty(graph, vertex, beta)
+
+		// Get the ID of the best shard with respect to current vertex
+		bestShard := getBestShard(scores, randomGen)
+
+		// Store the ID of the shard which the vertex should set its label to
+		vertex.NewLabel = bestShard
+	}
+
+	// Only at the end of the CLPA iteration are the vertex labels updated
+	for _, vertex := range sortedVertices {
+
+		// move vertex to new best shard
+		moveVertex(graph, vertex, vertex.NewLabel, rho)
+	}
 }

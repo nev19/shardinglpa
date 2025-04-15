@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"strconv"
 	"sync"
-	"time"
 
 	"example.com/shardinglpa/shared"
 )
@@ -73,7 +72,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 				fmt.Println("Start of Epoch ", epoch)
 
 				// Start clock
-				start := time.Now()
+				//start := time.Now()
 
 				// Generate the filename dynamically based on the epoch value
 				filename := fmt.Sprintf("%sepoch_%d.csv", datasetDir, epoch)
@@ -125,7 +124,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 				graph.ShardWorkloads = calculateShardWorkloads(graph)
 
 				// Now that preparation is ready, the actual CLPA can run and the results recorded
-				result := runCLPA(seed, alpha, beta, tau, rho, graph, randomGen)
+				result := runClpa(seed, alpha, beta, tau, rho, graph, randomGen)
 
 				// Add inactive vertices back to graph for the next epoch
 				for id, vertex := range inactiveVertices {
@@ -133,7 +132,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 				}
 
 				// Add the time program ran
-				result.Duration = time.Since(start)
+				//result.Duration = time.Since(start)
 
 				// Append the result for the current epoch to the epochResults slice
 				epochResults = append(epochResults, result)
@@ -159,9 +158,10 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 	return groupedResults
 }
 
-func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Graph, randomGen *rand.Rand) shared.EpochResult {
+func runClpa(seed int64, alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
+	randomGen *rand.Rand) shared.EpochResult {
 
-	convergenceIter := -1 // Default value if no convergence
+	convergenceIter := -1 // Default value if no convergence within iterations
 
 	// Carry out CLPA iterations
 	for iter := 0; iter < tau; iter++ {
@@ -190,7 +190,7 @@ func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Gr
 			// Record the iteration number when convergence occurred (1-based)
 			convergenceIter = iter + 1
 
-			// Stop iterations
+			// Stop CLPA iterations in case of convergence
 			break
 		}
 
@@ -211,7 +211,10 @@ func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Gr
 		}
 	*/
 
+	// Calculate the workload imabalnce, number of cross shard transactions and fitness of the partitioning
 	workloadImbalance, crossShardWorkload, fitness := shared.CalculateFitness(graph, alpha)
+
+	// Return the results of the epoch
 	return shared.EpochResult{
 		Seed:               seed,
 		Fitness:            fitness,
@@ -220,6 +223,59 @@ func runCLPA(seed int64, alpha, beta float64, tau int, rho int, graph *shared.Gr
 		ConvergenceIter:    convergenceIter,
 	}
 
+}
+
+// The main CLPA function that iterates through all vertices and assigns shards
+func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
+
+	// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
+	// Initialize an array to store fitness values for each iteration
+	//var fitnessValues []float64
+
+	// Get a random order to use for this CLPA iteration
+	sortedVertices := setVerticesOrder(graph, randomGen)
+
+	// Iterate through each vertex in some order
+	for _, vertex := range sortedVertices {
+
+		// Calculate the score of shards with respect to current vertex
+		scores := calculateScores(graph, vertex, beta)
+
+		// TESTING - PRINT OUT SCORES
+		/*
+			fmt.Println("\nCLPA on VERTEX: ", i, vertex.ID)
+
+			// Dereference and print each value of scores
+			fmt.Print("SCORES for this vertex:")
+			for _, ptr := range scores {
+				if ptr != nil {
+					fmt.Print(" ", *ptr, " ") // Access the value via pointer
+				} else {
+					fmt.Print(" <nil> ")
+				}
+			}
+		*/
+
+		// Get the ID of the best shard with respect to current vertex
+		bestShard := getBestShard(scores, randomGen)
+		//fmt.Println("Winner: ", bestShard)
+
+		// Move current vertex to new best shard
+		moveVertex(graph, vertex, bestShard, rho)
+
+		// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
+		// Calculate fitness and append to the array
+		//_, _, fitness := CalculateFitness(graph, 0.5) // Adjust alpha value as needed
+		//fitnessValues = append(fitnessValues, fitness)
+	}
+
+	/*
+		// Write fitness values to a CSV file
+		err := WriteFitnessToCSV(fitnessValues, "fitness_values.csv")
+		if err != nil {
+			panic(err) // Handle error as needed
+		}
+	*/
 }
 
 // Function to get seeds from file
