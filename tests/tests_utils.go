@@ -58,6 +58,8 @@ func CreateTimesWriter(filename string) (*csv.Writer, *os.File) {
 	return writer, file
 }
 
+// Function that finds the best graph in terms of fitness and returns it
+// The rest of the graphs are discarded
 func GetBestGraph(seedResults []*shared.EpochResult) *shared.Graph {
 
 	// Safety check: return an empty graph if there are no results to compare
@@ -74,15 +76,12 @@ func GetBestGraph(seedResults []*shared.EpochResult) *shared.Graph {
 	for _, result := range seedResults {
 		if result.Fitness < bestFitness {
 			bestFitness = result.Fitness
-			//bestSeed = result.Seed
 			bestGraph = result.Graph
 		}
 		// Free up memory by deleting the graphs
 		result.Graph = nil
 	}
 
-	// TESTING
-	//fmt.Printf("Best seed: %d with fitness: %.3f\n", bestSeed, bestFitness)
 	return bestGraph
 }
 
@@ -105,6 +104,8 @@ func WriteResults(groupedResults [][]*shared.EpochResult, writer *csv.Writer, te
 	// Iterate over the results (each epoch within each run) and write to csv
 	for epochIndex, seedsResults := range groupedResults {
 		for _, result := range seedsResults {
+
+			// Prepare row for writing to csv
 			record := []string{
 				strconv.Itoa(test),
 				strconv.Itoa(run),
@@ -142,6 +143,8 @@ func WriteTimes(writer *csv.Writer, test int, run int, timesBaseline []float64,
 	}
 
 	for i := 0; i < len(timesBaseline); i++ {
+
+		// Prepare row for writing to csv
 		record := []string{
 			strconv.Itoa(test),
 			strconv.Itoa(run),

@@ -97,7 +97,7 @@ func RunClpaPaper(alpha float64, beta float64, tau int, rho int, graph *shared.G
 	// Carry out CLPA iterations
 	for iter := 0; iter < tau; iter++ {
 
-		// create a map with all old labels - meaning labels of vertices before current CLPA iteration
+		// Create a map with all old labels - meaning labels of vertices before current CLPA iteration
 		oldLabels := make(map[string]int)
 		for id, vertex := range graph.Vertices {
 			oldLabels[id] = vertex.Label
@@ -110,6 +110,8 @@ func RunClpaPaper(alpha float64, beta float64, tau int, rho int, graph *shared.G
 		// CLPA iterations should still continue, as stipulated in the paper
 		if convergenceIter == -1 {
 			converged := true
+
+			// Check if any vertex's label changed
 			for id, vertex := range graph.Vertices {
 				if oldLabels[id] != vertex.Label {
 					converged = false
@@ -147,7 +149,7 @@ func RunClpaConvergenceStop(alpha float64, beta float64, tau int, rho int, graph
 	// Carry out CLPA iterations
 	for iter := 0; iter < tau; iter++ {
 
-		// create a map with all old labels - meaning labels of vertices before current CLPA iteration
+		// Create a map with all old labels - meaning labels of vertices before current CLPA iteration
 		oldLabels := make(map[string]int)
 		for id, vertex := range graph.Vertices {
 			oldLabels[id] = vertex.Label
@@ -158,6 +160,8 @@ func RunClpaConvergenceStop(alpha float64, beta float64, tau int, rho int, graph
 
 		// CLPA iterations should stop once convergence is reached
 		converged := true
+
+		// Check if any vertex's label changed
 		for id, vertex := range graph.Vertices {
 			if oldLabels[id] != vertex.Label {
 				converged = false
@@ -192,14 +196,17 @@ func RunClpaConvergenceStop(alpha float64, beta float64, tau int, rho int, graph
 func RunClpaConvergenceTest(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult {
 
-	// Create slice to store boolean indicating whether a vertex changed label or not
+	// Create slice to store boolean indicating whether a vertex changed label or not in each iteration
 	// By default all values are false in the beginning
 	labelChanged := make([]bool, tau)
+
+	// Create slice to store the fitness of the partioning in each iteration
+	fitness := make([]float64, tau)
 
 	// Carry out CLPA iterations
 	for iter := 0; iter < tau; iter++ {
 
-		// create a map with all old labels - meaning labels of vertices before current CLPA iteration
+		// Create a map with all old labels - meaning labels of vertices before current CLPA iteration
 		oldLabels := make(map[string]int)
 		for id, vertex := range graph.Vertices {
 			oldLabels[id] = vertex.Label
@@ -208,17 +215,29 @@ func RunClpaConvergenceTest(alpha float64, beta float64, tau int, rho int, graph
 		// Perform an iteration of CLPA according to the mode (sync or async)
 		runClpaIter(graph, beta, randomGen, rho, scoringPenalty)
 
+		// Calculate the fitness of the partitioning for the current iteration
+		_, _, iterationfitness := shared.CalculateFitness(graph, alpha)
+		fitness[iter] = iterationfitness
+
+		// Check if any vertex's label changed
 		for id, vertex := range graph.Vertices {
 			if oldLabels[id] != vertex.Label {
 				labelChanged[iter] = true
 				break
 			}
 		}
+
 	}
 
-	// Return only the slice showing whether any label changed at each iteration
-	return &shared.EpochResult{
+	// Create IterationsInfo struct and populate it
+	iterationsInfo := &shared.IterationsInfo{
 		LabelChanged: labelChanged,
+		Fitness:      fitness,
+	}
+
+	// Return the epoch result with only the information about the iterations
+	return &shared.EpochResult{
+		IterationsInfo: iterationsInfo,
 	}
 }
 

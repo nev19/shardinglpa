@@ -13,10 +13,10 @@ import (
 
 func RunTest(runs int) {
 
-	log.Println("*********** TEST SUITE 'Convergence of CLPA' STARTED ***********")
+	log.Println("*********** TEST 'Convergence of CLPA' STARTED (1/1) ***********")
 
 	// CSV header for recording test times
-	header := []string{"run", "epoch", "iter", "labelChanged"}
+	header := []string{"run", "epoch", "iteration", "labelChanged", "fitness"}
 
 	filename := "iterations_label_change"
 
@@ -42,12 +42,11 @@ func RunTest(runs int) {
 	// The number of epochs to be run
 	numberOfEpochs := 30
 
-	// The number of iterations of CLPA
-	tau := 1000
+	// The number of iterations of CLPA is set to a greater number than 100, in the paper tau = 100
+	tau := 500
 
 	// The number of times/threshold each vertex is allowed to update its label (rho)
-	// For this test, rho is set equal to the number of iterations so it becomes ineffective
-	rho := tau
+	rho := 50
 
 	// The weight of cross-shard vs workload imbalance in fitness calculation
 	alpha := 0.5
@@ -63,8 +62,6 @@ func RunTest(runs int) {
 
 	// END OF SETUP
 
-	// NOW FOR THE TEST:
-
 	// Set CLPA iteration call to be made with update mode set to async
 	var runClpaIter paperclpa.ClpaIterationMode = paperclpa.ClpaIterationAsync
 
@@ -73,6 +70,8 @@ func RunTest(runs int) {
 
 	// Set CLPA scoring penalty to be same as the one in the paper
 	var scoringPenalty paperclpa.ScoringPenalty = paperclpa.CalculateScoresPaper
+
+	// NOW FOR THE TEST:
 
 	for run := 1; run <= runs; run++ {
 
@@ -95,12 +94,30 @@ func RunTest(runs int) {
 
 		// Write CSV rows: each row corresponds to an iteration in an epoch
 		for epochIndex, result := range paperclpaResults {
-			for iter, changed := range result.LabelChanged {
+
+			// Safety check: make sure IterationsInfo exists
+			if result.IterationsInfo == nil {
+				log.Printf("Warning: IterationsInfo is nil for run %d, epoch %d", run, epochIndex+1)
+				continue
+			}
+
+			for iter, changed := range result.IterationsInfo.LabelChanged {
+
+				// Get the corresponding fitness for this iteration
+				fitness := 0.0
+				if iter < len(result.IterationsInfo.Fitness) {
+					fitness = result.IterationsInfo.Fitness[iter]
+				} else {
+					log.Printf("Warning: missing fitness value for run %d, epoch %d, iter %d", run, epochIndex+1, iter+1)
+				}
+
+				// Prepare row for writing to csv
 				record := []string{
 					strconv.Itoa(run),            // Run number
 					strconv.Itoa(epochIndex + 1), // Epoch number (1-based)
 					strconv.Itoa(iter + 1),       // Iteration number (1-based)
-					strconv.FormatBool(changed),  // "true" or "false"
+					strconv.FormatBool(changed),  // "TRUE" or "FALSE"
+					fmt.Sprintf("%.3f", fitness), // Fitness of partitioning
 				}
 
 				if err := writerConvergence.Write(record); err != nil {

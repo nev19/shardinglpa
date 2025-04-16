@@ -60,17 +60,17 @@ func RunTestSuite(runs int) {
 	// Set CLPA scoring penalty to be same as the one in the paper
 	var scoringPenalty paperclpa.ScoringPenalty = paperclpa.CalculateScoresPaper
 
-	// END OF SETUP
-
-	// NOW FOR THE TESTS:
-
-	test := 1
-
 	// Set number of parallel runs to maximum number of cores available
 	numberOfParallelRuns := int(runtime.NumCPU())
 
 	// Set number of parallel runs to half the number of cores available
 	halfNumberOfParallelRuns := int(runtime.NumCPU() / 2)
+
+	// END OF SETUP
+
+	// NOW FOR THE TESTS:
+
+	test := 1
 
 	numberOfShards = 8
 	arrivalRate = "low"

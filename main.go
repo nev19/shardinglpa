@@ -12,6 +12,7 @@ import (
 
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
+	"example.com/shardinglpa/tests/convergence"
 )
 
 func main() {
@@ -50,8 +51,8 @@ func main() {
 	//updatemode.RunTest(20)
 
 	// Run the Test 'Convergence of CLPA'
-	// This tests the convergence of CLPA when rho is not used to stop label updates for XXXXXXXX times
-	//convergence.RunTest(1 XXXX)
+	// This tests the convergence behaviour of CLPA for 50 times
+	convergence.RunTest(50)
 
 	// Run the Test Suite 'Paper Penalty vs New Penalty'
 	// This tests performance of the new penalty compared to the paper's penalty formula for 50 times each test

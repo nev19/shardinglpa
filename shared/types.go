@@ -23,16 +23,12 @@ type EpochResult struct {
 	WorkloadImbalance  float64
 	CrossShardWorkload int
 	ConvergenceIter    int // -1 if no convergence, otherwise the iteration number
-	//Duration           time.Duration // The time epoch ran for UNUSED
-	Graph        *Graph
-	LabelChanged []bool // Used only in convergence test
+	Graph              *Graph
+	IterationsInfo     *IterationsInfo // Used only in convergence test
 }
 
-// OLD Struct to hold the result of a single simulation run (per epoch)
-/*
-type SeedResults struct {
-	Seed        int64
-	Graph       *Graph
-	EpochResult []EpochResult
+// Struct to hold results of an iteration in convergence test
+type IterationsInfo struct {
+	LabelChanged []bool    // indicates whether any label changed during an iteration
+	Fitness      []float64 // the fitness of the partitioning in an iteration
 }
-*/

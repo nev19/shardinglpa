@@ -10,7 +10,7 @@ import (
 
 func RunTest(runs int) {
 
-	log.Println("*********** TEST SUITE 'Update Mode of CLPA' STARTED ***********")
+	log.Println("*********** TEST 'Update Mode of CLPA' STARTED (1/1) ***********")
 
 	writerAsync, fileAsync := tests.CreateResultsWriter("updatemode/paper_CLPA_async")
 	defer writerAsync.Flush()
@@ -41,17 +41,17 @@ func RunTest(runs int) {
 	// The transaction arrival rate
 	arrivalRate := "low"
 
-	// END OF SETUP
-
-	// NOW FOR THE TEST:
-
-	test := 1
-
 	// Set CLPA to be called with 'stop on convergence' set to off, as in paper
 	var clpaCall paperclpa.ClpaCall = paperclpa.RunClpaPaper
 
 	// Set CLPA scoring penalty to be same as the one in the paper
 	var scoringPenalty paperclpa.ScoringPenalty = paperclpa.CalculateScoresPaper
+
+	// END OF SETUP
+
+	// NOW FOR THE TEST:
+
+	test := 1
 
 	for run := 1; run <= runs; run++ {
 
