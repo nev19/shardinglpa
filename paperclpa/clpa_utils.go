@@ -10,12 +10,11 @@ import (
 	"example.com/shardinglpa/shared"
 )
 
-// ClpaUpdateModeFunc represents a CLPA iteration strategy (async or sync)
+// ClpaUpdateMode represents a CLPA iteration strategy (async or sync)
 type ClpaIterationMode func(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	rho int, scoringPenalty ScoringPenalty)
 
-// ClpaCallFunc indicates whether to record convergence results of each iteration of CLPA
-// This is usually set to the function that does not record convergence results
+// ClpaCall indicates whether to stop iterations on convergence, or not, or run a convergence test
 type ClpaCall func(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult
 

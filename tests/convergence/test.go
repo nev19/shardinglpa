@@ -11,14 +11,39 @@ import (
 	"example.com/shardinglpa/shared"
 )
 
-func RunTest(runs int) {
+func RunTestSuite(runs int) {
 
-	log.Println("*********** TEST 'Convergence of CLPA' STARTED (1/1) ***********")
+	log.Println("****** TEST SUITE 'Convergence of CLPA with Paper Penalty and New Penalty' STARTED (2 Tests in Total) ******")
+
+	// TEST 1
+	// Set the name of the file to write to
+	filename := "iterations_info_paper_penalty"
+
+	// Set CLPA scoring penalty to be same as the one in the paper
+	var scoringPenalty paperclpa.ScoringPenalty = paperclpa.CalculateScoresPaper
+
+	// Call test 1
+	log.Println("Started Test 1/2 - Paper Penalty Convergence")
+	RunTest(runs, filename, scoringPenalty)
+
+	// TEST 2
+	// Set the name of the file to write to
+	filename = "iterations_info_new_penalty"
+
+	// Set CLPA scoring penalty to be the newly proposed penalty formula
+	scoringPenalty = paperclpa.CalculateScoresNew
+
+	// Call test 2
+	log.Println("Started Test 2/2 - New Penalty Convergence")
+	RunTest(runs, filename, scoringPenalty)
+
+	log.Println("****** TEST SUITE 'Convergence of CLPA with Paper Penalty and New Penalty' FINISHED ******")
+}
+
+func RunTest(runs int, filename string, scoringPenalty paperclpa.ScoringPenalty) {
 
 	// CSV header for recording test times
 	header := []string{"run", "epoch", "iteration", "labelChanged", "fitness"}
-
-	filename := "iterations_label_change"
 
 	filePath := fmt.Sprintf("tests/convergence/%s.csv", filename)
 	fileConvergence, err := os.Create(filePath)
@@ -67,9 +92,6 @@ func RunTest(runs int) {
 
 	// Set CLPA to be called with the test for convergence
 	var clpaCall paperclpa.ClpaCall = paperclpa.RunClpaConvergenceTest
-
-	// Set CLPA scoring penalty to be same as the one in the paper
-	var scoringPenalty paperclpa.ScoringPenalty = paperclpa.CalculateScoresPaper
 
 	// NOW FOR THE TEST:
 
