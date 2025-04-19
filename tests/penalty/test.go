@@ -12,7 +12,7 @@ import (
 )
 
 func RunTestSuite(runs int) {
-	log.Println("*********** TEST SUITE 'Paper Penalty vs New Penalty' STARTED *********** (15 Tests in total)")
+	log.Println("*********** TEST SUITE 'Paper Penalty vs New Penalty' STARTED (15 Tests in total) ***********")
 
 	writerPaperPen, filePaperPen := tests.CreateResultsWriter("penalty/paper_penalty")
 	defer writerPaperPen.Flush()
@@ -186,7 +186,7 @@ func RunTestSuite(runs int) {
 }
 
 func RunMiniTestSuite(runs int) {
-	log.Println("*********** MINI TEST SUITE 'Paper Penalty vs New Penalty (mini)' STARTED *********** (2 Tests in total)")
+	log.Println("*********** MINI TEST SUITE 'Paper Penalty vs New Penalty (mini)' STARTED (2 Tests in total) ***********")
 
 	writerPaperPen, filePaperPen := tests.CreateResultsWriter("penalty/mini/paper_penalty")
 	defer writerPaperPen.Flush()

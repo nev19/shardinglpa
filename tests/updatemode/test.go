@@ -10,7 +10,7 @@ import (
 
 func RunTest(runs int) {
 
-	log.Println("*********** TEST 'Update Mode of CLPA' STARTED (1/1) ***********")
+	log.Println("*********** TEST 'Update Mode of CLPA' STARTED ***********")
 
 	writerAsync, fileAsync := tests.CreateResultsWriter("updatemode/paper_CLPA_async")
 	defer writerAsync.Flush()

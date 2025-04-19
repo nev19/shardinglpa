@@ -12,8 +12,6 @@ import (
 
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
-	"example.com/shardinglpa/tests/convergence"
-	"example.com/shardinglpa/tests/penalty"
 )
 
 func main() {
@@ -54,11 +52,11 @@ func main() {
 	/* Run the Mini Test Suite 'Paper Penalty vs New Penalty (mini)'
 	This test was done when the new penalty formula was first designed, and led to the development of the
 	'Convergence' and 'Paper Penalty vs New Penalty' tests called below */
-	penalty.RunMiniTestSuite(5)
+	//penalty.RunMiniTestSuite(5)
 
 	// Run the Test Suite 'Convergence of CLPA with Paper Penalty and New Penalty'
 	// This tests the convergence behaviour of CLPA with the two different penalties for 50 times each test
-	convergence.RunTestSuite(50)
+	//convergence.RunTestSuite(50)
 
 	// Run the Test Suite 'Paper Penalty vs New Penalty'
 	// This tests performance of the new penalty compared to the paper's penalty formula for 50 times each test

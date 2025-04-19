@@ -15,7 +15,7 @@ import (
 
 func RunTestSuite(runs int) {
 
-	log.Println("*********** TEST SUITE 'CLPA vs Concurrent CLPA' STARTED *********** (8 Tests in total)")
+	log.Println("*********** TEST SUITE 'CLPA vs Concurrent CLPA' STARTED (8 Tests in total) ***********")
 
 	writerPaper, filePaper := tests.CreateResultsWriter("concurrent/paper_CLPA")
 	defer writerPaper.Flush()
