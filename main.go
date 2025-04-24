@@ -12,6 +12,7 @@ import (
 
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
+	"example.com/shardinglpa/tests/final"
 )
 
 func main() {
@@ -62,24 +63,9 @@ func main() {
 	// This tests performance of the new penalty compared to the paper's penalty formula for 50 times each test
 	//penalty.RunTestSuite(50)
 
-	// FINAL TEST
-	// low and high arrival rate
-	// CHECK OUT GetSeeds func to see that is working well
-
-	// The number of seeds passed in to the sharding function determines the number of parallel runs
-	/*
-		numberOfParallelRuns := 32
-		nextSeedIndex := 0
-			// Get the random seeds
-			seeds, err := mylpa.GetSeeds("mylpa/seeds.csv", numberOfParallelRuns)
-			if err != nil {
-				log.Fatalf("Failed to load seeds: %v", err)
-			}
-
-			nextSeedIndex += numberOfParallelRuns
-
-			mylpa.ShardAllocation()
-	*/
+	// Run the Test Suite 'CLPA vs My LPA'
+	// This tests CLPA as in paper vs My LPA for 50 times each test
+	final.RunTestSuite(2)
 
 }
 

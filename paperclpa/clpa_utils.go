@@ -10,7 +10,7 @@ import (
 	"example.com/shardinglpa/shared"
 )
 
-// ClpaUpdateMode represents a CLPA iteration strategy (async or sync)
+// ClpaIterationMode represents a CLPA iteration strategy (async or sync)
 type ClpaIterationMode func(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	rho int, scoringPenalty ScoringPenalty)
 

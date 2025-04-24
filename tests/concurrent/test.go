@@ -187,5 +187,4 @@ func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs 
 		tests.WriteTimes(writerTimes, test, run, timeSingle, timeParallel)
 	}
 	log.Printf("Test finished")
-	//memStat()
 }

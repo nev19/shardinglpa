@@ -193,8 +193,8 @@ func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho 
 	}
 }
 
-// Function to get seeds from file
-func GetSeeds(filename string, num int) ([]int64, error) {
+// Function to get seeds from file starting from a specific index
+func GetSeeds(filename string, num int, nextSeedIndex int) ([]int64, error) {
 
 	// Read the CSV file
 	rows, err := shared.ReadCSV(filename)
@@ -204,30 +204,33 @@ func GetSeeds(filename string, num int) ([]int64, error) {
 
 	var seeds []int64
 
-	// Iterate over all rows and values to extract seed numbers
-	for _, row := range rows {
-		for _, value := range row {
+	// Iterate from nextSeedIndex to extract seeds
+	for i := nextSeedIndex; i < len(rows); i++ {
 
-			if len(seeds) >= num {
-				return seeds, nil
-			}
+		row := rows[i]
 
-			// Convert the string value to int64
-			seed, err := strconv.ParseInt(value, 10, 64)
-			if err != nil {
-				return nil, fmt.Errorf("invalid seed value: %v", err)
-			}
-
-			// Append the parsed seed to the result slice
-			seeds = append(seeds, seed)
+		// Skip empty lines
+		if len(row) == 0 {
+			continue
 		}
+
+		if len(seeds) >= num {
+			break
+		}
+
+		// Convert the string value to int64
+		seed, err := strconv.ParseInt(row[0], 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid seed value at row %d: %v", i+1, err)
+		}
+
+		// Append the seed to the result slice
+		seeds = append(seeds, seed)
 	}
 
-	// Check if we gathered enough seeds
 	if len(seeds) < num {
-		return nil, fmt.Errorf("not enough seeds: needed %d, found %d", num, len(seeds))
+		return nil, fmt.Errorf("not enough seeds starting from index %d: needed %d, found %d", nextSeedIndex, num, len(seeds))
 	}
 
-	// Return the slice of seeds
 	return seeds, nil
 }
