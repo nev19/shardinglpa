@@ -126,13 +126,15 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, seed int64) *shared.EpochResult {
 
 	//FAILED ATTEMPT
-	// Map to store those vertices that may change their label on the next run
-	pendingVertices := make(map[string]struct{})
+	/*
+		// Map to store those vertices that may change their label on the next run
+		pendingVertices := make(map[string]struct{})
 
-	// Add each vertex to the pending list initially
-	for id := range graph.Vertices {
-		pendingVertices[id] = struct{}{}
-	}
+		// Add each vertex to the pending list initially
+		for id := range graph.Vertices {
+			pendingVertices[id] = struct{}{}
+		}
+	*/
 	//FAILED ATTEMPT
 
 	convergenceIter := -1 // Default value if no convergence within iterations
@@ -147,7 +149,7 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 		}
 
 		// Perform an iteration of CLPA while keeping track of which vertices are pending
-		clpaIteration(graph, beta, randomGen, rho, pendingVertices)
+		clpaIteration(graph, beta, randomGen, rho) //pendingVertices)
 
 		// CLPA iterations should stop once convergence is reached
 		converged := true
@@ -183,8 +185,9 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 }
 
 // The function that performs an iteration through all vertices and assigns shards
-func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand,
-	rho int, pendingVertices map[string]struct{}) {
+func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
+	// FAILED ATTEMPT
+	//, pendingVertices map[string]struct{}) {
 
 	// Get a random order to use for this CLPA iteration
 	sortedVertices := setVerticesOrder(graph, randomGen)
@@ -192,11 +195,13 @@ func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	// Iterate through each vertex in some order
 	for _, vertex := range sortedVertices {
 
-		//FAILED ATTEMPT
-		// Skip this vertex if it is not in the pending list (non-passive)
-		if _, isPending := pendingVertices[vertex.ID]; !isPending {
-			continue
-		}
+		//FAILED ATTEMPT#
+		/*
+			// Skip this vertex if it is not in the pending list (non-passive)
+			if _, isPending := pendingVertices[vertex.ID]; !isPending {
+				continue
+			}
+		*/
 		//FAILED ATTEMPT
 
 		// Calculate the score of shards with respect to current vertex
@@ -209,25 +214,27 @@ func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 		moveVertex(graph, vertex, bestShard, rho)
 
 		//FAILED ATTEMPT
-		// Check if vertex has become passive, if so delete from pendingVertices, otherwise add it
-		if isPassive(vertex, graph) {
-			delete(pendingVertices, vertex.ID)
-		} else {
-			pendingVertices[vertex.ID] = struct{}{}
-		}
-
-		// Check if neighbouring vertices of current vertex have become passive
-		for neighborID := range vertex.Edges {
-			neighbor := graph.Vertices[neighborID]
-
-			// If neighbouring vertex has become passive, delete it from the pending vertices if it is there
-			// Else, add it to the pending vertices (it is overwritten if it is present already)
-			if isPassive(neighbor, graph) {
-				delete(pendingVertices, neighborID)
+		/*
+			// Check if vertex has become passive, if so delete from pendingVertices, otherwise add it
+			if isPassive(vertex, graph) {
+				delete(pendingVertices, vertex.ID)
 			} else {
-				pendingVertices[neighborID] = struct{}{}
+				pendingVertices[vertex.ID] = struct{}{}
 			}
-		}
+
+			// Check if neighbouring vertices of current vertex have become passive
+			for neighborID := range vertex.Edges {
+				neighbor := graph.Vertices[neighborID]
+
+				// If neighbouring vertex has become passive, delete it from the pending vertices if it is there
+				// Else, add it to the pending vertices (it is overwritten if it is present already)
+				if isPassive(neighbor, graph) {
+					delete(pendingVertices, neighborID)
+				} else {
+					pendingVertices[neighborID] = struct{}{}
+				}
+			}
+		*/
 		//FAILED ATTEMPT
 	}
 }

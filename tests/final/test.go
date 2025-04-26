@@ -31,7 +31,7 @@ func RunTestSuite(runs int) {
 
 	// The number of epochs to be run
 	numberOfEpochsLow := 30
-	numberOfEpochsHigh := 12
+	//numberOfEpochsHigh := 12
 
 	// The number of times/threshold each vertex is allowed to update its label (rho)
 	rho := 50
@@ -67,6 +67,23 @@ func RunTestSuite(runs int) {
 	arrivalRate = "low"
 
 	// VARY THIS AS WELL
+	beta = 0.2
+
+	//TEST 1
+	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	/*
+		arrivalRate = "high"
+		//TEST 2
+		log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, full parallel runs")
+		runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, alpha, beta,
+			tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+		test++
+	*/
+
 	beta = 0.5
 
 	//TEST 1
@@ -75,10 +92,11 @@ func RunTestSuite(runs int) {
 		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 	test++
 
-	arrivalRate = "high"
-	//TEST 2
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, full parallel runs")
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, alpha, beta,
+	beta = 0.8
+
+	//TEST 1
+	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 	test++
 

@@ -130,6 +130,32 @@ func moveVertex(graph *shared.Graph, vertex *shared.Vertex, newShard int, rho in
 		return
 	}
 
+	/*
+		//NEW ---------
+		// Calculate score of staying in current shard (oldShard)
+		currentScore := 0
+		for neighborID, weight := range vertex.Edges {
+			if graph.Vertices[neighborID].Label == oldShard {
+				currentScore += weight
+			}
+		}
+
+		// Calculate score of moving to new shard (newShard)
+		newScore := 0
+		for neighborID, weight := range vertex.Edges {
+			if graph.Vertices[neighborID].Label == newShard {
+				newScore += weight
+			}
+		}
+
+		// Adaptive move: Only move if newScore is significantly better than currentScore
+		if float64(newScore) <= 1.0000000001*float64(currentScore) {
+			// If the new score is not at least 5% better, skip moving
+			return
+		}
+		//NEW ---------
+	*/
+
 	// The shard workloads are not calculated from scratch but rather updated since this is more efficient
 	intra, crossWithNew, crossWithOthers, special_intra := 0, 0, 0, 0
 
