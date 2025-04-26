@@ -88,7 +88,7 @@ func ShardAllocation(datasetDir string, shards int, epoch int, graph *shared.Gra
 
 }
 
-// The CLPA function that continues iterations for all tau iterations irrespective of convergence
+// The CLPA function that continues iterations for all tau iterations irrespective of convergence, as per paper
 func RunClpaPaper(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, runClpaIter ClpaIterationMode, scoringPenalty ScoringPenalty) *shared.EpochResult {
 
