@@ -13,7 +13,9 @@ import (
 
 func RunTestSuite(runs int) {
 
-	log.Println("****** TEST SUITE 'Convergence of CLPA with Paper Penalty and New Penalty' STARTED (2 Tests in Total) ******")
+	totalTests := 2
+
+	log.Printf("****** TEST SUITE 'Convergence of CLPA with Paper Penalty and New Penalty' STARTED (%d Tests in Total) ******", totalTests)
 
 	// TEST 1
 	// Set the name of the file to write to
@@ -23,7 +25,7 @@ func RunTestSuite(runs int) {
 	var scoringPenalty paperclpa.ScoringPenalty = paperclpa.CalculateScoresPaper
 
 	// Call test 1
-	log.Println("Started Test 1/2 - Paper Penalty Convergence")
+	log.Printf("Started Test 1/%d - Paper Penalty Convergence", totalTests)
 	RunTest(runs, filename, scoringPenalty)
 
 	// TEST 2
@@ -34,7 +36,7 @@ func RunTestSuite(runs int) {
 	scoringPenalty = paperclpa.CalculateScoresNew
 
 	// Call test 2
-	log.Println("Started Test 2/2 - New Penalty Convergence")
+	log.Printf("Started Test 2/%d - New Penalty Convergence", totalTests)
 	RunTest(runs, filename, scoringPenalty)
 
 	log.Println("****** TEST SUITE 'Convergence of CLPA with Paper Penalty and New Penalty' FINISHED ******")

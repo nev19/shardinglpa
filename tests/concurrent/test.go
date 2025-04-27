@@ -15,7 +15,9 @@ import (
 
 func RunTestSuite(runs int) {
 
-	log.Println("*********** TEST SUITE 'CLPA vs Concurrent CLPA' STARTED (8 Tests in total) ***********")
+	totalTests := 8
+
+	log.Printf("*********** TEST SUITE 'CLPA vs Concurrent CLPA' STARTED (%d Tests in total) ***********", totalTests)
 
 	writerPaper, filePaper := tests.CreateResultsWriter("concurrent/paper_CLPA")
 	defer writerPaper.Flush()
@@ -76,26 +78,26 @@ func RunTestSuite(runs int) {
 	arrivalRate = "low"
 
 	//TEST 1
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = low, full parallel runs", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
 	test++
 
 	//TEST 2
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, half parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"%d - shards = 8, tx arrival rate = low, half parallel runs", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, halfNumberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
 	test++
 
 	arrivalRate = "high"
 	//TEST 3
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, full parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = high, full parallel runs", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
 	test++
 
 	//TEST 4
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, half parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = high, half parallel runs", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, halfNumberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
 	test++
@@ -103,26 +105,26 @@ func RunTestSuite(runs int) {
 	numberOfShards = 16
 	arrivalRate = "low"
 	//TEST 5
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = low, full parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = low, full parallel runs", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
 	test++
 
 	//TEST 6
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = low, half parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = low, half parallel runs", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, halfNumberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
 	test++
 
 	arrivalRate = "high"
 	//TEST 7
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = high, full parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = high, full parallel runs", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
 	test++
 
 	//TEST 8
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = high, half parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = high, half parallel runs", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, halfNumberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, clpaCall, scoringPenalty, writerPaper, writerPaperParallel, writerTimes)
 	test++

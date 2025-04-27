@@ -93,8 +93,12 @@ func initialiseNewVertices(graph *shared.Graph, randomGen *rand.Rand) *shared.Gr
 		if vertex.Label == -1 {
 			vertex.Label = randomGen.Intn(graph.NumberOfShards)
 			vertex.LabelUpdateCounter = 0
+			vertex.LabelVotes = make(map[int]int)
+			vertex.LabelVotes[vertex.Label] = 1 // Initialize with a self-vote
+
 		}
 	}
+
 	return graph
 }
 
@@ -132,6 +136,7 @@ func moveVertex(graph *shared.Graph, vertex *shared.Vertex, newShard int, rho in
 
 	/*
 		//NEW ---------
+		// NO SMALL CHANGE METHOD
 		// Calculate score of staying in current shard (oldShard)
 		currentScore := 0
 		for neighborID, weight := range vertex.Edges {

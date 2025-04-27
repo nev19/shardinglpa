@@ -12,7 +12,10 @@ import (
 )
 
 func RunTestSuite(runs int) {
-	log.Println("*********** TEST SUITE 'Paper Penalty vs New Penalty' STARTED (15 Tests in total) ***********")
+
+	totalTests := 15
+
+	log.Printf("*********** TEST SUITE 'Paper Penalty vs New Penalty' STARTED (%d Tests in total) ***********", totalTests)
 
 	writerPaperPen, filePaperPen := tests.CreateResultsWriter("penalty/paper_penalty")
 	defer writerPaperPen.Flush()
@@ -63,7 +66,7 @@ func RunTestSuite(runs int) {
 	beta = 0.1
 
 	//TEST 1
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.1, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.1, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -71,7 +74,7 @@ func RunTestSuite(runs int) {
 	beta = 0.3
 
 	//TEST 2
-	log.Println("Started Test " + strconv.Itoa(test) + "/15- beta = 0.3, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d- beta = 0.3, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -79,7 +82,7 @@ func RunTestSuite(runs int) {
 	beta = 0.5
 
 	//TEST 3
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.5, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.5, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -87,7 +90,7 @@ func RunTestSuite(runs int) {
 	beta = 0.7
 
 	//TEST 4
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.7, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.7, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -95,7 +98,7 @@ func RunTestSuite(runs int) {
 	beta = 0.9
 
 	//TEST 5
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.9, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.9, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -104,7 +107,7 @@ func RunTestSuite(runs int) {
 	beta = 0.1
 
 	//TEST 6
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.1, shards = 16")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.1, shards = 16", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -112,7 +115,7 @@ func RunTestSuite(runs int) {
 	beta = 0.3
 
 	//TEST 7
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.3, shards = 16")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.3, shards = 16", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -120,7 +123,7 @@ func RunTestSuite(runs int) {
 	beta = 0.5
 
 	//TEST 8
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.5, shards = 16")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.5, shards = 16", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -128,7 +131,7 @@ func RunTestSuite(runs int) {
 	beta = 0.7
 
 	//TEST 9
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.7, shards = 16")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.7, shards = 16", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -136,7 +139,7 @@ func RunTestSuite(runs int) {
 	beta = 0.9
 
 	//TEST 10
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.9, shards = 16")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.9, shards = 16", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -145,7 +148,7 @@ func RunTestSuite(runs int) {
 	beta = 0.1
 
 	//TEST 11
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.1, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.1, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -153,7 +156,7 @@ func RunTestSuite(runs int) {
 	beta = 0.3
 
 	//TEST 12
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.3, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.3, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -161,7 +164,7 @@ func RunTestSuite(runs int) {
 	beta = 0.5
 
 	//TEST 13
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.5, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.5, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -169,7 +172,7 @@ func RunTestSuite(runs int) {
 	beta = 0.7
 
 	//TEST 14
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.7, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.7, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -177,7 +180,7 @@ func RunTestSuite(runs int) {
 	beta = 0.9
 
 	//TEST 15
-	log.Println("Started Test " + strconv.Itoa(test) + "/15 - beta = 0.9, shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.9, shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -186,7 +189,10 @@ func RunTestSuite(runs int) {
 }
 
 func RunMiniTestSuite(runs int) {
-	log.Println("*********** MINI TEST SUITE 'Paper Penalty vs New Penalty (mini)' STARTED (2 Tests in total) ***********")
+
+	totalTests := 2
+
+	log.Printf("*********** MINI TEST SUITE 'Paper Penalty vs New Penalty (mini)' STARTED (%d Tests in total) ***********", totalTests)
 
 	writerPaperPen, filePaperPen := tests.CreateResultsWriter("penalty/mini/paper_penalty")
 	defer writerPaperPen.Flush()
@@ -236,7 +242,7 @@ func RunMiniTestSuite(runs int) {
 	numberOfShards = 8
 
 	//TEST 1
-	log.Println("Started Test " + strconv.Itoa(test) + "/2 - shards = 8")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, clpaCall)
 	test++
@@ -244,7 +250,7 @@ func RunMiniTestSuite(runs int) {
 	numberOfShards = 16
 
 	//TEST 2
-	log.Println("Started Test " + strconv.Itoa(test) + "/2 - shards = 16")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, clpaCall)
 	test++

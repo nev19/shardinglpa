@@ -125,7 +125,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int,
 func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, seed int64) *shared.EpochResult {
 
-	//FAILED ATTEMPT
+	//FAILED (attempt to implement passive)
 	/*
 		// Map to store those vertices that may change their label on the next run
 		pendingVertices := make(map[string]struct{})
@@ -137,7 +137,17 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	*/
 	//FAILED ATTEMPT
 
+	// Ensure all vertices have initialized LabelVotes
+	for _, vertex := range graph.Vertices {
+		if vertex.LabelVotes == nil {
+			vertex.LabelVotes = make(map[int]int)
+			vertex.LabelVotes[vertex.Label] = 1 // Give an initial vote for current label
+		}
+	}
+
 	convergenceIter := -1 // Default value if no convergence within iterations
+
+	minIterations := 5 // Run at least 5 iterations before checking convergence
 
 	// Carry out CLPA iterations
 	for iter := 0; iter < tau; iter++ {
@@ -149,7 +159,7 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 		}
 
 		// Perform an iteration of CLPA while keeping track of which vertices are pending
-		clpaIteration(graph, beta, randomGen, rho) //pendingVertices)
+		clpaIteration(graph, beta, randomGen, rho) //pendingVertices) //FAILED ATTEMPT
 
 		// CLPA iterations should stop once convergence is reached
 		converged := true
@@ -159,12 +169,8 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 				break
 			}
 		}
-		if converged {
-
-			// Record the iteration number when convergence occurred (1-based)
+		if converged && iter+1 >= minIterations {
 			convergenceIter = iter + 1
-
-			// Stop CLPA iterations in case of convergence
 			break
 		}
 
@@ -210,8 +216,23 @@ func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho 
 		// Get the ID of the best shard with respect to current vertex
 		bestShard := getBestShard(scores, randomGen)
 
-		// Move current vertex to new best shard
-		moveVertex(graph, vertex, bestShard, rho)
+		// Instead of moving immediately, add a vote
+		vertex.LabelVotes[bestShard]++
+
+		// Find the label with the most votes
+		winningShard, maxVotes := vertex.Label, vertex.LabelVotes[vertex.Label]
+		for shard, votes := range vertex.LabelVotes {
+			if votes > maxVotes {
+				winningShard = shard
+				maxVotes = votes
+			}
+		}
+
+		// If winning shard is different and has enough dominance, then move
+		voteMargin := 1 // <-- configurable: need at least 1 more votes than current label
+		if winningShard != vertex.Label && (vertex.LabelVotes[winningShard]-vertex.LabelVotes[vertex.Label] >= voteMargin) {
+			moveVertex(graph, vertex, winningShard, rho)
+		}
 
 		//FAILED ATTEMPT
 		/*

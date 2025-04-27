@@ -7,6 +7,7 @@ type Vertex struct {
 	Edges              map[string]int // Map of neighbour vertex IDs to edge weights
 	LabelUpdateCounter int            // Number of times the vertex has updated its label
 	NewLabel           int            // Used only for synchronous updating mode
+	LabelVotes         map[int]int
 }
 
 // Define the Graph structure

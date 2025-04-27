@@ -15,7 +15,9 @@ import (
 
 func RunTestSuite(runs int) {
 
-	log.Println("*********** TEST SUITE 'CLPA vs My LPA' STARTED (XXXXX Tests in total) ***********")
+	totalTests := 30
+
+	log.Printf("*********** TEST SUITE 'CLPA vs My LPA' STARTED (%d Tests in total) ***********", totalTests)
 
 	writerPaper, filePaper := tests.CreateResultsWriter("final/paper_CLPA")
 	defer writerPaper.Flush()
@@ -66,59 +68,227 @@ func RunTestSuite(runs int) {
 	numberOfShards = 8
 	arrivalRate = "low"
 
-	// VARY THIS AS WELL
-	beta = 0.2
-
+	beta = 0.1
 	//TEST 1
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = low, beta = ", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 	test++
 
-	/*
-		arrivalRate = "high"
-		//TEST 2
-		log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = high, full parallel runs")
-		runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, alpha, beta,
-			tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-		test++
-	*/
+	beta = 0.3
+	//TEST 2
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
 
 	beta = 0.5
-
-	//TEST 1
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
+	//TEST 3
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = low, beta = ", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 	test++
 
-	beta = 0.8
-
-	//TEST 1
-	log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 8, tx arrival rate = low, full parallel runs")
+	beta = 0.7
+	//TEST 4
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = low, beta = ", totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
 		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 	test++
 
-	/*
+	beta = 0.9
+	//TEST 5
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
 
-		numberOfShards = 16
-		arrivalRate = "low"
-		//TEST 3
-		log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = low, full parallel runs")
-		runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
-			tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-		test++
+	arrivalRate = "high"
 
-		arrivalRate = "high"
-		//TEST 4
-		log.Println("Started Test " + strconv.Itoa(test) + "/8 - shards = 16, tx arrival rate = high, full parallel runs")
-		runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, alpha, beta,
-			tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-		test++
-	*/
+	beta = 0.1
+	//TEST 6
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
 
-	numberOfShards = 24 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	beta = 0.3
+	//TEST 7
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.5
+	//TEST 8
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.7
+	//TEST 9
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.9
+	//TEST 10
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	numberOfShards = 16
+	arrivalRate = "low"
+
+	beta = 0.1
+	//TEST 11
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.3
+	//TEST 12
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.5
+	//TEST 13
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.7
+	//TEST 14
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.9
+	//TEST 15
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	arrivalRate = "high"
+
+	beta = 0.1
+	//TEST 16
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.3
+	//TEST 17
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.5
+	//TEST 18
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.7
+	//TEST 19
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.9
+	//TEST 20
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	numberOfShards = 24
+	arrivalRate = "low"
+
+	beta = 0.1
+	//TEST 21
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.3
+	//TEST 22
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.5
+	//TEST 23
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.7
+	//TEST 24
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.9
+	//TEST 25
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = low, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	arrivalRate = "high"
+
+	beta = 0.1
+	//TEST 26
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.3
+	//TEST 27
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.5
+	//TEST 28
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.7
+	//TEST 29
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
+
+	beta = 0.9
+	//TEST 30
+	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 24, tx arrival rate = high, beta = ", totalTests)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, alpha, beta,
+		tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test++
 
 	log.Println("*********** TEST SUITE 'CLPA vs My LPA' FINISHED ***********")
 }
