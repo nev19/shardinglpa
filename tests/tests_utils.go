@@ -64,7 +64,7 @@ func GetBestGraph(seedResults []*shared.EpochResult) *shared.Graph {
 
 	// Safety check: return an empty graph if there are no results to compare
 	if len(seedResults) == 0 {
-		fmt.Println("No results to process.")
+		log.Println("No results to process.")
 		return &shared.Graph{}
 
 	}

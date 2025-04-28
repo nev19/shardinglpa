@@ -2,7 +2,7 @@ package paperclpa
 
 // Import necessary packages
 import (
-	"fmt"
+	"log"
 	"math"
 	"math/rand"
 	"sort"
@@ -41,7 +41,7 @@ func InitialiseGraphFromRows(rows [][]string, graph *shared.Graph, randomGen *ra
 		}
 	}
 	if fromIdx == -1 || toIdx == -1 {
-		fmt.Println("Error: 'from' or 'to' column not found in header.")
+		log.Println("Error: 'from' or 'to' column not found in header.")
 		return graph
 	}
 

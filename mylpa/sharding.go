@@ -2,6 +2,7 @@ package mylpa
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -50,7 +51,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int,
 	// Load the CSV data once
 	rows, err := shared.ReadCSV(filename)
 	if err != nil {
-		fmt.Printf("Error reading CSV %s: %v\n", filename, err)
+		log.Printf("Error reading CSV %s: %v\n", filename, err)
 		return nil, nil
 	}
 

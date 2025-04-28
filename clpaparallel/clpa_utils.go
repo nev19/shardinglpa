@@ -2,7 +2,7 @@ package clpaparallel
 
 // Import necessary packages
 import (
-	"fmt"
+	"log"
 	"math"
 	"math/rand"
 	"sort"
@@ -29,7 +29,7 @@ func updateGraphFromRows(rows [][]string, graph *shared.Graph) *shared.Graph {
 		}
 	}
 	if fromIdx == -1 || toIdx == -1 {
-		fmt.Println("Error: 'from' or 'to' column not found in header.")
+		log.Println("Error: 'from' or 'to' column not found in header.")
 		return graph
 	}
 

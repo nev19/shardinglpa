@@ -3,6 +3,7 @@ package shared
 import (
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -41,15 +42,15 @@ func SplitMultipleDatasets(datasets []string, outputDir string, chunkSize int, m
 	chunkNumber := 1
 
 	for _, dataset := range datasets {
-		fmt.Printf("Processing dataset: %s\n", dataset)
+		log.Printf("Processing dataset: %s\n", dataset)
 		var err error
 		leftover, chunkNumber, transactionsRemaining, err = splitEpochs(dataset, outputDir, chunkNumber, leftover, chunkSize, transactionsRemaining)
 		if err != nil {
-			fmt.Printf("Error processing dataset %s: %v\n", dataset, err)
+			log.Printf("Error processing dataset %s: %v\n", dataset, err)
 			break // stop the creation of epochs
 		}
 		if transactionsRemaining <= 0 {
-			fmt.Println("Reached maxTransactions limit.")
+			log.Println("Reached maxTransactions limit.")
 			break
 		}
 	}
@@ -176,7 +177,7 @@ func saveChunk(outputDir string, chunk [][]string, chunkNumber int) {
 	fileName := fmt.Sprintf("%sepoch_%d.csv", outputDir, chunkNumber)
 	outputFile, err := os.Create(fileName)
 	if err != nil {
-		fmt.Println("Error creating output file:", err)
+		log.Println("Error creating output file:", err)
 		return
 	}
 	defer outputFile.Close()
@@ -185,10 +186,10 @@ func saveChunk(outputDir string, chunk [][]string, chunkNumber int) {
 	writer := csv.NewWriter(outputFile)
 	err = writer.WriteAll(chunk)
 	if err != nil {
-		fmt.Println("Error writing to output file:", err)
+		log.Println("Error writing to output file:", err)
 		return
 	}
 	writer.Flush()
 
-	fmt.Printf("Chunk %d saved to %s\n", chunkNumber, fileName)
+	log.Printf("Chunk %d saved to %s\n", chunkNumber, fileName)
 }

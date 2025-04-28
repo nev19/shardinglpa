@@ -2,6 +2,7 @@ package paperclpa
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
 
@@ -52,7 +53,7 @@ func ShardAllocation(datasetDir string, shards int, epoch int, graph *shared.Gra
 	// Load the CSV data once per epoch
 	rows, err := shared.ReadCSV(filename)
 	if err != nil {
-		fmt.Printf("Error reading CSV %s: %v\n", filename, err)
+		log.Printf("Error reading CSV %s: %v\n", filename, err)
 	}
 
 	// Initialise the graph with random shard labels for new vertices
