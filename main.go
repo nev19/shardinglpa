@@ -65,7 +65,7 @@ func main() {
 
 	// Run the Test Suite 'CLPA vs My LPA'
 	// This tests CLPA as in paper vs My LPA for 50 times each test
-	final.RunTestSuite(2)
+	final.RunTestSuite(3)
 
 }
 
