@@ -15,7 +15,7 @@ import (
 
 func RunTestSuite(runs int) {
 
-	totalTests := 8
+	totalTests := 30
 
 	log.Printf("*********** TEST SUITE 'CLPA vs Concurrent CLPA' STARTED (%d Tests in total) ***********", totalTests)
 

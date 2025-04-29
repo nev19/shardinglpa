@@ -14,9 +14,9 @@ import (
 
 func RunTestSuite(runs int) {
 
-	totalTests := 30
+	totalTests := 80
 
-	log.Printf("*********** TEST SUITE 'CLPA vs My LPA' STARTED (%d Tests in total) ***********", totalTests)
+	log.Printf("*********** TEST SUITE 'CLPA vs Parallel CLPA vs My LPA' STARTED (%d Tests in total) ***********", totalTests)
 
 	writerPaper, filePaper := tests.CreateResultsWriter("final/paper_CLPA")
 	defer writerPaper.Flush()
@@ -40,260 +40,111 @@ func RunTestSuite(runs int) {
 	// The weight of cross-shard vs workload imbalance in fitness calculation
 	alpha := 0.5
 
-	// The weight of cross-shard vs workload imbalance in score function
-	beta := 0.5
-
 	// The number of iterations of CLPA
 	tau := 100
 
-	// The number of shards
-	numberOfShards := 8
-
-	// The transaction arrival rate
-	arrivalRate := "low"
-
 	// Set CLPA iteration call to be made with update mode set to async
 	var runClpaIter paperclpa.ClpaIterationMode = paperclpa.ClpaIterationAsync
-
-	// Set number of parallel runs to maximum number of cores available
-	numberOfParallelRuns := int(runtime.NumCPU())
-	halfCores := true
-
-	// Set number of parallel runs to half the number of cores available
-	//halfNumberOfParallelRuns := int(runtime.NumCPU() / 2) XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 	// END OF SETUP
 
 	// NOW FOR THE TESTS:
 
+	/* 60 tests are run in total
+	The following settings are varied:
+		beta (0.1, 0.3, 0.5, 0.7, 0.9) - The weight of cross-shard vs workload imbalance in score function
+		transaction arrival rate - low or high
+		the number of cores running the program simultaneously
+		the number of shards
+	*/
+
 	test := 1
+	betas := []float64{0.1, 0.3, 0.5, 0.7, 0.9}
 
-	numberOfShards = 8
-	arrivalRate = "low"
+	// Set number of parallel runs to half the number of cores available
+	numberOfParallelRuns := int(runtime.NumCPU() / 2)
+	halfCores := true
+	/*
+		// 8 shards
+		test = runBatchTests(test, totalTests, runs, 8, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+		test = runBatchTests(test, totalTests, runs, 8, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 
-	beta = 0.1
-	//TEST 1
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+		// 16 shards
+		test = runBatchTests(test, totalTests, runs, 16, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+		test = runBatchTests(test, totalTests, runs, 16, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 
-	beta = 0.3
-	//TEST 2
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+		// 24 shards
+		test = runBatchTests(test, totalTests, runs, 24, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+		test = runBatchTests(test, totalTests, runs, 24, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	*/
+	// 64 shards
+	test = runBatchTests(test, totalTests, runs, 64, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test = runBatchTests(test, totalTests, runs, 64, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 
-	beta = 0.5
-	//TEST 3
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+	// Set number of parallel runs to maximum number of cores available
+	numberOfParallelRuns = int(runtime.NumCPU())
+	halfCores = false
 
-	beta = 0.7
-	//TEST 4
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+	// 8 shards
+	test = runBatchTests(test, totalTests, runs, 8, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test = runBatchTests(test, totalTests, runs, 8, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 
-	beta = 0.9
-	//TEST 5
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+	// 16 shards
+	test = runBatchTests(test, totalTests, runs, 16, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test = runBatchTests(test, totalTests, runs, 16, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 
-	arrivalRate = "high"
+	// 24 shards
+	test = runBatchTests(test, totalTests, runs, 24, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test = runBatchTests(test, totalTests, runs, 24, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 
-	beta = 0.1
-	//TEST 6
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+	// 64 shards
+	test = runBatchTests(test, totalTests, runs, 64, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	test = runBatchTests(test, totalTests, runs, 64, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 
-	beta = 0.3
-	//TEST 7
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+	log.Println("*********** TEST SUITE 'CLPA vs Parallel CLPA vs My LPA' FINISHED ***********")
+}
 
-	beta = 0.5
-	//TEST 8
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+// runBatchTests executes a batch of tests with specific configurations
+// It loops over the provided beta values, logging and invoking runTest for each.
+// The function returns the updated test counter after all tests are completed.
+func runBatchTests(startTest int, totalTests int, runs int, shards int, arrival string, epochs int, betas []float64,
+	numberOfParallelRuns int, halfCores bool, alpha float64, tau int, rho int, runClpaIter paperclpa.ClpaIterationMode,
+	writerPaper, writerFinal, writerTimes *csv.Writer) int {
 
-	beta = 0.7
-	//TEST 9
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+	test := startTest
 
-	beta = 0.9
-	//TEST 10
-	log.Printf("Started Test %d/%d - shards = 8, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+	// Iterate through all beta values and run a test for each
+	for _, beta := range betas {
 
-	numberOfShards = 16
-	arrivalRate = "low"
+		// Log the start of the test with its parameters
+		log.Printf("Started Test %d/%d - shards = %d, tx arrival rate = %s, beta = %.1f", test, totalTests, shards, arrival, beta)
 
-	beta = 0.1
-	//TEST 11
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+		// Run the actual test with the current configuration
+		runTest(test, runs, shards, arrival, epochs, numberOfParallelRuns, halfCores,
+			alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
 
-	beta = 0.3
-	//TEST 12
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
+		// Increment test counter for the next test
+		test++
+	}
 
-	beta = 0.5
-	//TEST 13
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.7
-	//TEST 14
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.9
-	//TEST 15
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	arrivalRate = "high"
-
-	beta = 0.1
-	//TEST 16
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.3
-	//TEST 17
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.5
-	//TEST 18
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.7
-	//TEST 19
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.9
-	//TEST 20
-	log.Printf("Started Test %d/%d - shards = 16, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	numberOfShards = 24
-	arrivalRate = "low"
-
-	beta = 0.1
-	//TEST 21
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.3
-	//TEST 22
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.5
-	//TEST 23
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.7
-	//TEST 24
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.9
-	//TEST 25
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = low, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsLow, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	arrivalRate = "high"
-
-	beta = 0.1
-	//TEST 26
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.3
-	//TEST 27
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.5
-	//TEST 28
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.7
-	//TEST 29
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	beta = 0.9
-	//TEST 30
-	log.Printf("Started Test %d/%d - shards = 24, tx arrival rate = high, beta = %.1f", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochsHigh, numberOfParallelRuns, halfCores,
-		alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test++
-
-	log.Println("*********** TEST SUITE 'CLPA vs My LPA' FINISHED ***********")
+	// Return the updated test counter so the caller can continue numbering correctly
+	return test
 }
 
 func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs int, parallelRuns int,
