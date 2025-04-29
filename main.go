@@ -12,7 +12,7 @@ import (
 
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
-	"example.com/shardinglpa/tests/final"
+	"example.com/shardinglpa/tests/concurrent"
 )
 
 func main() {
@@ -44,7 +44,7 @@ func main() {
 
 	// Run the Test Suite 'CLPA vs Concurrent CLPA'
 	// This tests CLPA as in paper vs parallel CLPA for 50 times each test
-	//concurrent.RunTestSuite(50)
+	concurrent.RunTestSuite(3)
 
 	// Run the Test 'Update Mode of CLPA'
 	// This tests async vs sync update modes of CLPA for 20 times
@@ -65,7 +65,7 @@ func main() {
 
 	// Run the Test Suite 'CLPA vs My LPA'
 	// This tests CLPA as in paper vs My LPA for 50 times each test
-	final.RunTestSuite(1)
+	//final.RunTestSuite(3)
 
 }
 

@@ -3,7 +3,6 @@ package penalty
 import (
 	"encoding/csv"
 	"log"
-	"strconv"
 	"time"
 
 	"example.com/shardinglpa/paperclpa"
@@ -66,7 +65,7 @@ func RunTestSuite(runs int) {
 	beta = 0.1
 
 	//TEST 1
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.1, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -74,7 +73,7 @@ func RunTestSuite(runs int) {
 	beta = 0.3
 
 	//TEST 2
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d- beta = 0.3, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d- beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -82,7 +81,7 @@ func RunTestSuite(runs int) {
 	beta = 0.5
 
 	//TEST 3
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.5, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -90,7 +89,7 @@ func RunTestSuite(runs int) {
 	beta = 0.7
 
 	//TEST 4
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.7, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -98,7 +97,7 @@ func RunTestSuite(runs int) {
 	beta = 0.9
 
 	//TEST 5
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.9, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -107,7 +106,7 @@ func RunTestSuite(runs int) {
 	beta = 0.1
 
 	//TEST 6
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.1, shards = 16", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -115,7 +114,7 @@ func RunTestSuite(runs int) {
 	beta = 0.3
 
 	//TEST 7
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.3, shards = 16", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -123,7 +122,7 @@ func RunTestSuite(runs int) {
 	beta = 0.5
 
 	//TEST 8
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.5, shards = 16", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -131,7 +130,7 @@ func RunTestSuite(runs int) {
 	beta = 0.7
 
 	//TEST 9
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.7, shards = 16", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -139,7 +138,7 @@ func RunTestSuite(runs int) {
 	beta = 0.9
 
 	//TEST 10
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.9, shards = 16", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -148,7 +147,7 @@ func RunTestSuite(runs int) {
 	beta = 0.1
 
 	//TEST 11
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.1, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -156,7 +155,7 @@ func RunTestSuite(runs int) {
 	beta = 0.3
 
 	//TEST 12
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.3, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -164,7 +163,7 @@ func RunTestSuite(runs int) {
 	beta = 0.5
 
 	//TEST 13
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.5, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -172,7 +171,7 @@ func RunTestSuite(runs int) {
 	beta = 0.7
 
 	//TEST 14
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.7, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -180,7 +179,7 @@ func RunTestSuite(runs int) {
 	beta = 0.9
 
 	//TEST 15
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - beta = 0.9, shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -230,7 +229,7 @@ func RunMiniTestSuite(runs int) {
 	// Set CLPA iteration call to be made with update mode set to async, as in paper
 	var runClpaIter paperclpa.ClpaIterationMode = paperclpa.ClpaIterationAsync
 
-	// Set CLPA to be called with 'stop on convergence' set to off, as in paper
+	// Set CLPA for the new penalty to be called with 'stop on convergence' set to off, as in paper
 	var clpaCall paperclpa.ClpaCall = paperclpa.RunClpaPaper
 
 	// END OF SETUP
@@ -242,7 +241,7 @@ func RunMiniTestSuite(runs int) {
 	numberOfShards = 8
 
 	//TEST 1
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 8", totalTests)
+	log.Printf("Started Test %d/%d - shards = 8", test, totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, clpaCall)
 	test++
@@ -250,7 +249,7 @@ func RunMiniTestSuite(runs int) {
 	numberOfShards = 16
 
 	//TEST 2
-	log.Printf("Started Test "+strconv.Itoa(test)+"/%d - shards = 16", totalTests)
+	log.Printf("Started Test %d/%d - shards = 16", test, totalTests)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, clpaCall)
 	test++

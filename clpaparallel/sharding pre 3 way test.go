@@ -1,14 +1,5 @@
 package clpaparallel
 
-import (
-	"fmt"
-	"log"
-	"math/rand"
-	"sync"
-
-	"example.com/shardinglpa/shared"
-)
-
 /*
 Function to perform shard allocation
 
@@ -22,20 +13,19 @@ the weight of the objectives in the fitness function (alpha),
 the weight of cross-shard vs workload imbalance in score function (beta),
 number of iterations of the algorithm (tau),
 number of times/threshold each vertex is allowed to update its label (rho),
-the random seeds to be used for parallel runs
 
 Output:
 the epoch results for each separate parallel run,
 the vertices with no transcations in this epoch
-*/
+
 func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns int, epochNumber int,
-	graph *shared.Graph, alpha float64, beta float64, tau int, rho int, seeds []int64) ([]*shared.EpochResult, map[string]*shared.Vertex) {
+	graph *shared.Graph, alpha float64, beta float64, tau int, rho int) ([]*shared.EpochResult, map[string]*shared.Vertex) {
 
 	// Create a WaitGroup to wait for all goroutines to finish
 	var wg sync.WaitGroup
 
-	// Buffered channel to collect results from each seed's run
-	results := make(chan *shared.EpochResult, len(seeds))
+	// Buffered channel to collect results from each parallel run
+	results := make(chan *shared.EpochResult, numberOfParallelRuns)
 
 	// Create a new graph if it was not passed in to function
 	if graph == nil {
@@ -61,7 +51,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 	//The following process can be done on the graph before a copy is provided to each go routine:
 	/* inactiveVertices refers to vertices which have no edges in this particular epoch.
 	These will be dealt with by being removed since CLPA should ignore them, and then
-	after CLPA is run, added back to graph. */
+	after CLPA is run, added back to graph.
 	inactiveVertices := make(map[string]*shared.Vertex)
 	for id, vertex := range graph.Vertices {
 		if len(vertex.Edges) == 0 {
@@ -73,22 +63,20 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 	}
 
 	// Iterate through the runs
-	//for parallelRun := 0; parallelRun < numberOfParallelRuns; parallelRun++ {
-
-	// Iterate through each seed
-	for _, seed := range seeds {
+	for parallelRun := 0; parallelRun < numberOfParallelRuns; parallelRun++ {
 
 		// Increment the WaitGroup counter by 1 to track a new goroutine
 		wg.Add(1)
 
-		// Launch a new goroutine to run the CLPA for a specific seed
-		go func(seed int64) {
+		// Launch a new goroutine to run the CLPA
+		go func(parallelRun int) {
 
 			// Decrease the WaitGroup counter when the goroutine finishes
 			defer wg.Done()
 
 			// Use unique random generator for each parallel run
-			randomGen := rand.New(rand.NewSource(seed))
+			// 'run' is used as an offset since time may be same on multiple runs
+			randomGen := rand.New(rand.NewSource(time.Now().UnixNano() + int64(parallelRun)))
 
 			// Deep copy the graph for this goroutine
 			localGraph := shared.DeepCopyGraph(graph)
@@ -100,13 +88,13 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 			localGraph.ShardWorkloads = calculateShardWorkloads(localGraph)
 
 			// Now that preparation is ready, the actual CLPA can run and the results recorded
-			epochResult := runClpa(alpha, beta, tau, rho, localGraph, randomGen, seed)
+			epochResult := runClpa(alpha, beta, tau, rho, localGraph, randomGen)
 
 			epochResult.Graph = localGraph
 
 			// Send the epoch results for this seed to the results channel
 			results <- epochResult
-		}(seed)
+		}(parallelRun)
 	}
 
 	// Wait for all Goroutines to finish and close the results channel
@@ -126,7 +114,7 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 
 // The CLPA function
 func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
-	randomGen *rand.Rand, seed int64) *shared.EpochResult {
+	randomGen *rand.Rand) *shared.EpochResult {
 
 	convergenceIter := -1 // Default value if no convergence within iterations
 
@@ -166,7 +154,7 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 
 	// Return the results of the epoch
 	return &shared.EpochResult{
-		Seed:               seed,
+		Seed:               -1, // set to -1 since no seed is used, the algorithm is random
 		Fitness:            fitness,
 		WorkloadImbalance:  workloadImbalance,
 		CrossShardWorkload: crossShardWorkload,
@@ -195,3 +183,5 @@ func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho 
 
 	}
 }
+
+*/
