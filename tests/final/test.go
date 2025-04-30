@@ -15,7 +15,7 @@ import (
 
 func RunTestSuite(runsHalfCores int, runsFullCores int) {
 
-	totalTests := 40
+	totalTests := 32
 
 	log.Printf("*********** TEST SUITE 'CLPA vs Parallel CLPA vs My LPA' STARTED (%d Tests in total) ***********", totalTests)
 
@@ -102,6 +102,7 @@ func RunTestSuite(runsHalfCores int, runsFullCores int) {
 			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
 	*/
 
+	betas = []float64{0.5}
 	// 16 shards
 	test = runBatchTests(test, totalTests, runs, 16, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
 		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
