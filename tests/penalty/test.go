@@ -61,132 +61,128 @@ func RunTestSuite(runs int) {
 
 	test := 1
 
-	/*
+	numberOfShards = 8
+	beta = 0.1
 
-		numberOfShards = 8
-		beta = 0.1
+	//TEST 1
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
+	beta = 0.3
 
-			//TEST 1
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 2
+	log.Printf("Started Test %d/%d- beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.3
+	beta = 0.5
 
-			//TEST 2
-			log.Printf("Started Test %d/%d- beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 3
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.5
+	beta = 0.7
 
-			//TEST 3
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 4
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.7
+	beta = 0.9
 
-			//TEST 4
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 5
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.9
+	numberOfShards = 16
+	beta = 0.1
 
-			//TEST 5
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 6
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			numberOfShards = 16
-			beta = 0.1
+	beta = 0.3
 
-			//TEST 6
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 7
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.3
+	beta = 0.5
 
-			//TEST 7
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 8
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.5
+	beta = 0.7
 
-			//TEST 8
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 9
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.7
+	beta = 0.9
 
-			//TEST 9
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 10
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.9
+	numberOfShards = 24
+	beta = 0.1
 
-			//TEST 10
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 16", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 11
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			numberOfShards = 24
-			beta = 0.1
+	beta = 0.3
 
-			//TEST 11
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 12
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.3
+	beta = 0.5
 
-			//TEST 12
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 13
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.5
+	beta = 0.7
 
-			//TEST 13
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
+	//TEST 14
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
-			beta = 0.7
+	beta = 0.9
 
-			//TEST 14
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
-
-			beta = 0.9
-
-			//TEST 15
-			log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
-			runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-				tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-			test++
-	*/
+	//TEST 15
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
+		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
+	test++
 
 	numberOfShards = 64
 	beta = 0.1

@@ -12,7 +12,7 @@ import (
 
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
-	"example.com/shardinglpa/tests/penalty"
+	"example.com/shardinglpa/tests/final"
 )
 
 func main() {
@@ -42,7 +42,7 @@ func main() {
 
 	// The following section runs different tests, for the amount of times passed in to the function
 
-	// Run the Test Suite 'CLPA vs Concurrent CLPA'
+	// Run the Test Suite 'CLPA vs Concurrent CLPA' XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 	// This tests CLPA as in paper vs parallel CLPA for 50 times each test
 	//concurrent.RunTestSuite(50)
 
@@ -61,11 +61,11 @@ func main() {
 
 	// Run the Test Suite 'Paper Penalty vs New Penalty'
 	// This tests performance of the new penalty compared to the paper's penalty formula for 50 times each test
-	penalty.RunTestSuite(50)
+	//penalty.RunTestSuite(50)
 
-	// Run the Test Suite 'CLPA vs My LPA'
-	// This tests CLPA as in paper vs My LPA for 50 times each test
-	//final.RunTestSuite(3)
+	// Run the Test Suite 'CLPA vs Parallel CLPA vs My LPA'
+	// This tests CLPA as in paper vs Parallel CLPA vs My LPA for 50 times each test
+	final.RunTestSuite(5, 1)
 
 }
 

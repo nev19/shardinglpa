@@ -15,7 +15,6 @@ Function to perform shard allocation
 Inputs:
 dataset path (for low or high arrival rate dataset),
 number of shards,
-number of parallel runs,
 number of current epoch,
 graph from previous epoch,
 the weight of the objectives in the fitness function (alpha),
@@ -28,7 +27,7 @@ Output:
 the epoch results for each separate parallel run,
 the vertices with no transcations in this epoch
 */
-func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns int, epochNumber int,
+func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int,
 	graph *shared.Graph, alpha float64, beta float64, tau int, rho int, seeds []int64) ([]*shared.EpochResult, map[string]*shared.Vertex) {
 
 	// Create a WaitGroup to wait for all goroutines to finish
@@ -71,9 +70,6 @@ func ShardAllocation(datasetDir string, numberOfShards int, numberOfParallelRuns
 			delete(graph.Vertices, id)
 		}
 	}
-
-	// Iterate through the runs
-	//for parallelRun := 0; parallelRun < numberOfParallelRuns; parallelRun++ {
 
 	// Iterate through each seed
 	for _, seed := range seeds {

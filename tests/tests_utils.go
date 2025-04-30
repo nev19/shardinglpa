@@ -39,7 +39,7 @@ func CreateResultsWriter(filename string) (*csv.Writer, *os.File) {
 func CreateTimesWriter(filename string) (*csv.Writer, *os.File) {
 
 	// CSV header for recording test times
-	header := []string{"test", "run", "epoch", "timeBaseline", "timeNew"}
+	header := []string{"test", "run", "epoch", "timeBaseline", "timeNew1", "timeNew2"}
 
 	filePath := fmt.Sprintf("tests/%s.csv", filename)
 	file, err := os.Create(filePath)
@@ -137,6 +137,8 @@ func WriteResults(groupedResults [][]*shared.EpochResult, writer *csv.Writer, te
 
 func WriteTimes(writer *csv.Writer, test int, run int, timesBaseline []float64,
 	timesNew []float64) {
+
+	// Ensure all time slices have the same length to avoid index out-of-bounds errors
 	if len(timesBaseline) != len(timesNew) {
 		log.Printf("Mismatched slice lengths: baseline=%d, new=%d", len(timesBaseline), len(timesNew))
 		return
@@ -151,6 +153,40 @@ func WriteTimes(writer *csv.Writer, test int, run int, timesBaseline []float64,
 			strconv.Itoa(i + 1), // epoch index (1-based)
 			fmt.Sprintf("%.6f", timesBaseline[i]),
 			fmt.Sprintf("%.6f", timesNew[i]),
+		}
+
+		if err := writer.Write(record); err != nil {
+			log.Printf("Error writing row to Time CSV: %v", err)
+		}
+	}
+
+	writer.Flush()
+
+	if err := writer.Error(); err != nil {
+		log.Printf("Error flushing Time CSV writer: %v", err)
+	}
+}
+
+func WriteThreeTimes(writer *csv.Writer, test int, run int, timesBaseline []float64,
+	timesNew1 []float64, timesNew2 []float64) {
+
+	// Ensure all time slices have the same length to avoid index out-of-bounds errors
+	if len(timesBaseline) != len(timesNew1) || len(timesBaseline) != len(timesNew2) {
+		log.Printf("Mismatched slice lengths: baseline=%d, new1=%d, new2=%d",
+			len(timesBaseline), len(timesNew1), len(timesNew2))
+		return
+	}
+
+	for i := 0; i < len(timesBaseline); i++ {
+
+		// Prepare row for writing to csv
+		record := []string{
+			strconv.Itoa(test),
+			strconv.Itoa(run),
+			strconv.Itoa(i + 1), // epoch index (1-based)
+			fmt.Sprintf("%.6f", timesBaseline[i]),
+			fmt.Sprintf("%.6f", timesNew1[i]),
+			fmt.Sprintf("%.6f", timesNew2[i]),
 		}
 
 		if err := writer.Write(record); err != nil {

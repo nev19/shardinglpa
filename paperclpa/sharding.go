@@ -54,6 +54,7 @@ func ShardAllocation(datasetDir string, shards int, epoch int, graph *shared.Gra
 	rows, err := shared.ReadCSV(filename)
 	if err != nil {
 		log.Printf("Error reading CSV %s: %v\n", filename, err)
+		return nil
 	}
 
 	// Initialise the graph with random shard labels for new vertices

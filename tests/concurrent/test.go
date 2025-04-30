@@ -416,7 +416,7 @@ func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs 
 			start = time.Now()
 
 			seedsResults, inactiveVertices := clpaparallel.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
-				shards, parallelRuns, epoch, graphParallel, alpha, beta, tau, rho, seeds)
+				shards, epoch, graphParallel, alpha, beta, tau, rho, seeds)
 
 			// Get the best graph from all of the parallel runs
 			graphParallel = tests.GetBestGraph(seedsResults)

@@ -6,15 +6,16 @@ import (
 	"runtime"
 	"time"
 
+	"example.com/shardinglpa/clpaparallel"
 	"example.com/shardinglpa/mylpa"
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
 	"example.com/shardinglpa/tests"
 )
 
-func RunTestSuite(runs int) {
+func RunTestSuite(runsHalfCores int, runsFullCores int) {
 
-	totalTests := 80
+	totalTests := 60
 
 	log.Printf("*********** TEST SUITE 'CLPA vs Parallel CLPA vs My LPA' STARTED (%d Tests in total) ***********", totalTests)
 
@@ -22,9 +23,13 @@ func RunTestSuite(runs int) {
 	defer writerPaper.Flush()
 	defer filePaper.Close()
 
-	writerFinal, filePaperParallel := tests.CreateResultsWriter("final/my_LPA")
-	defer writerFinal.Flush()
+	writerPaperParallel, filePaperParallel := tests.CreateResultsWriter("final/paper_CLPA_parallel")
+	defer writerPaperParallel.Flush()
 	defer filePaperParallel.Close()
+
+	writerFinal, fileFinal := tests.CreateResultsWriter("final/my_LPA")
+	defer writerFinal.Flush()
+	defer fileFinal.Close()
 
 	writerTimes, fileTimes := tests.CreateTimesWriter("final/test_times")
 	defer writerTimes.Flush()
@@ -64,58 +69,52 @@ func RunTestSuite(runs int) {
 	// Set number of parallel runs to half the number of cores available
 	numberOfParallelRuns := int(runtime.NumCPU() / 2)
 	halfCores := true
-	/*
-		// 8 shards
-		test = runBatchTests(test, totalTests, runs, 8, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
-			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-		test = runBatchTests(test, totalTests, runs, 8, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
-			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	runs := runsHalfCores
 
-		// 16 shards
-		test = runBatchTests(test, totalTests, runs, 16, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
-			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-		test = runBatchTests(test, totalTests, runs, 16, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
-			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	// 8 shards
+	test = runBatchTests(test, totalTests, runs, 8, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
+	test = runBatchTests(test, totalTests, runs, 8, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
 
-		// 24 shards
-		test = runBatchTests(test, totalTests, runs, 24, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
-			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-		test = runBatchTests(test, totalTests, runs, 24, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
-			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	*/
-	// 64 shards
-	test = runBatchTests(test, totalTests, runs, 64, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test = runBatchTests(test, totalTests, runs, 64, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	// 16 shards
+	test = runBatchTests(test, totalTests, runs, 16, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
+	test = runBatchTests(test, totalTests, runs, 16, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
+
+	// 24 shards
+	test = runBatchTests(test, totalTests, runs, 24, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
+	test = runBatchTests(test, totalTests, runs, 24, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
 
 	// Set number of parallel runs to maximum number of cores available
 	numberOfParallelRuns = int(runtime.NumCPU())
 	halfCores = false
+	runs = runsFullCores
 
-	// 8 shards
-	test = runBatchTests(test, totalTests, runs, 8, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test = runBatchTests(test, totalTests, runs, 8, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	/*
+		// 8 shards
+		test = runBatchTests(test, totalTests, runs, 8, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
+		test = runBatchTests(test, totalTests, runs, 8, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
+	*/
 
 	// 16 shards
 	test = runBatchTests(test, totalTests, runs, 16, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
 	test = runBatchTests(test, totalTests, runs, 16, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
 
-	// 24 shards
-	test = runBatchTests(test, totalTests, runs, 24, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test = runBatchTests(test, totalTests, runs, 24, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-
-	// 64 shards
-	test = runBatchTests(test, totalTests, runs, 64, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
-	test = runBatchTests(test, totalTests, runs, 64, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
-		halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+	/*
+		// 24 shards
+		test = runBatchTests(test, totalTests, runs, 24, "low", numberOfEpochsLow, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
+		test = runBatchTests(test, totalTests, runs, 24, "high", numberOfEpochsHigh, betas, numberOfParallelRuns,
+			halfCores, alpha, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
+	*/
 
 	log.Println("*********** TEST SUITE 'CLPA vs Parallel CLPA vs My LPA' FINISHED ***********")
 }
@@ -125,7 +124,7 @@ func RunTestSuite(runs int) {
 // The function returns the updated test counter after all tests are completed.
 func runBatchTests(startTest int, totalTests int, runs int, shards int, arrival string, epochs int, betas []float64,
 	numberOfParallelRuns int, halfCores bool, alpha float64, tau int, rho int, runClpaIter paperclpa.ClpaIterationMode,
-	writerPaper, writerFinal, writerTimes *csv.Writer) int {
+	writerPaper, writerPaperParallel, writerFinal, writerTimes *csv.Writer) int {
 
 	test := startTest
 
@@ -137,7 +136,7 @@ func runBatchTests(startTest int, totalTests int, runs int, shards int, arrival 
 
 		// Run the actual test with the current configuration
 		runTest(test, runs, shards, arrival, epochs, numberOfParallelRuns, halfCores,
-			alpha, beta, tau, rho, runClpaIter, writerPaper, writerFinal, writerTimes)
+			alpha, beta, tau, rho, runClpaIter, writerPaper, writerPaperParallel, writerFinal, writerTimes)
 
 		// Increment test counter for the next test
 		test++
@@ -149,7 +148,7 @@ func runBatchTests(startTest int, totalTests int, runs int, shards int, arrival 
 
 func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs int, parallelRuns int,
 	halfCores bool, alpha float64, beta float64, tau int, rho int, runClpaIter paperclpa.ClpaIterationMode,
-	writerPaper *csv.Writer, writerFinal *csv.Writer, writerTimes *csv.Writer) {
+	writerPaper *csv.Writer, writerPaperParallel *csv.Writer, writerFinal *csv.Writer, writerTimes *csv.Writer) {
 
 	// Counter to store the index of the next unused seed
 	nextSeedIndex := 0
@@ -157,12 +156,15 @@ func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs 
 	for run := 1; run <= runs; run++ {
 
 		var graphPaper *shared.Graph = nil
+		var graphParallel *shared.Graph = nil
 		var graphFinal *shared.Graph = nil
 
 		var timePaper []float64
+		var timeParallel []float64
 		var timeFinal []float64
 
 		var paperClpaResults []*shared.EpochResult
+		var paperParallelResults [][]*shared.EpochResult
 		var myLpaResults [][]*shared.EpochResult
 
 		// Iterate over the epochs
@@ -181,14 +183,16 @@ func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs 
 			epochResult := paperclpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
 				shards, epoch, graphPaper, alpha, beta, tau, rho, runClpaIter, clpaCall, scoringPenalty)
 
-			// Carry the graph forward for the next epoch
-			graphPaper = epochResult.Graph
+			// Check if result is nil, which can happen when epoch file is not found. If so, continue to next iteration
+			if epochResult == nil {
+				continue
+			}
 
 			// Append the time and epoch results to the slices
 			timePaper = append(timePaper, time.Since(start).Seconds())
 			paperClpaResults = append(paperClpaResults, epochResult)
 
-			// My LPA
+			// Parallel CLPA and My LPA
 
 			// Get the random seeds
 			seeds, err := mylpa.GetSeeds("mylpa/seeds.csv", parallelRuns, nextSeedIndex)
@@ -204,31 +208,54 @@ func runTest(test int, runs int, shards int, arrivalRate string, numberOfEpochs 
 				nextSeedIndex += parallelRuns
 			}
 
+			// Parallel CLPA
+
+			start = time.Now()
+
+			seedsResultsParallel, inactiveVerticesParallel := clpaparallel.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
+				shards, epoch, graphParallel, alpha, beta, tau, rho, seeds)
+
+			// Get the best graph from all of the parallel runs
+			graphParallel = tests.GetBestGraph(seedsResultsParallel)
+
+			// Add inactive vertices back to graph for the next epoch
+			// Only the best graph has the vertices added back to save resources
+			for id, vertex := range inactiveVerticesParallel {
+				graphParallel.Vertices[id] = vertex
+			}
+
+			// Append the time and epoch results to the slices
+			timeParallel = append(timeParallel, time.Since(start).Seconds())
+			paperParallelResults = append(paperParallelResults, seedsResultsParallel)
+
+			// My LPA
+
 			// Record time of start
 			start = time.Now()
 
 			// The number of seeds passed in to the sharding function determines the number of parallel runs
-			seedsResults, inactiveVertices := mylpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
+			seedsResultsFinal, inactiveVerticesFinal := mylpa.ShardAllocation("shared/epochs/"+arrivalRate+"_arrival_rate/",
 				shards, epoch, graphFinal, alpha, beta, tau, rho, seeds)
 
 			// Get the best graph from all of the parallel runs
-			graphFinal = tests.GetBestGraph(seedsResults)
+			graphFinal = tests.GetBestGraph(seedsResultsFinal)
 
 			// Add inactive vertices back to graph for the next epoch
 			// Only the best graph has the vertices added back to save resources
-			for id, vertex := range inactiveVertices {
+			for id, vertex := range inactiveVerticesFinal {
 				graphFinal.Vertices[id] = vertex
 			}
 
 			// Append the time and epoch results to the slices
 			timeFinal = append(timeFinal, time.Since(start).Seconds())
-			myLpaResults = append(myLpaResults, seedsResults)
+			myLpaResults = append(myLpaResults, seedsResultsFinal)
 
 		}
 		tests.WriteSingleResults(paperClpaResults, writerPaper, test, run)
+		tests.WriteResults(paperParallelResults, writerPaperParallel, test, run)
 		tests.WriteResults(myLpaResults, writerFinal, test, run)
 
-		tests.WriteTimes(writerTimes, test, run, timePaper, timeFinal)
+		tests.WriteThreeTimes(writerTimes, test, run, timePaper, timeParallel, timeFinal)
 	}
 	log.Printf("Test finished")
 }
