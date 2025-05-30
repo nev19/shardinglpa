@@ -184,47 +184,6 @@ func RunTestSuite(runs int) {
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
 
-	numberOfShards = 64
-	beta = 0.1
-
-	//TEST 16
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 64", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-	test++
-
-	beta = 0.3
-
-	//TEST 17
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 64", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-	test++
-
-	beta = 0.5
-
-	//TEST 18
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 64", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-	test++
-
-	beta = 0.7
-
-	//TEST 19
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 64", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-	test++
-
-	beta = 0.9
-
-	//TEST 20
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 64", test, totalTests, beta)
-	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
-		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
-	test++
-
 	log.Println("*********** TEST SUITE 'Paper Penalty vs New Penalty' FINISHED ***********")
 }
 

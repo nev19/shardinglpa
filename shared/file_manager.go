@@ -16,6 +16,23 @@ var columnsToKeep = map[string]bool{
 	"toCreate":    false,
 }
 
+// Function to generate epochs
+func ExtractEpochs() {
+
+	// Set paths to datasets
+	datasets := []string{
+		"shared/originaldataset/0_to_1_Block_Transactions.csv",
+		"shared/originaldataset/1_to_2_Block_Transactions.csv",
+	}
+
+	// Set the maximum number of transactions needed
+	maxTransactions := 3_000_000
+
+	// Call functions to split dataset into epochs according to the transaction arrival rate
+	splitMultipleDatasets(datasets, "shared/epochs/low_arrival_rate/", 100_000, maxTransactions)
+	splitMultipleDatasets(datasets, "shared/epochs/high_arrival_rate/", 250_000, maxTransactions)
+}
+
 // Function to read whole CSV file (such as epoch files)
 func ReadCSV(filename string) ([][]string, error) {
 	// Open the CSV file
@@ -35,7 +52,7 @@ func ReadCSV(filename string) ([][]string, error) {
 	return rows, nil
 }
 
-func SplitMultipleDatasets(datasets []string, outputDir string, chunkSize int, maxTransactions int) {
+func splitMultipleDatasets(datasets []string, outputDir string, chunkSize int, maxTransactions int) {
 
 	transactionsRemaining := maxTransactions
 	var leftover [][]string

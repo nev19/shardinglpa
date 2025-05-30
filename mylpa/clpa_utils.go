@@ -216,7 +216,7 @@ func calculateScores(graph *shared.Graph, v *shared.Vertex, beta float64) []*flo
 	// shard represents the variable 'k' in the equation (8) from the paper
 	for shard := 0; shard < graph.NumberOfShards; shard++ {
 
-		// Calculate the normalised edge weight contribution to the shard
+		// Calculate the edge weight contribution to the shard
 		edgeWeightWithShard := 0
 
 		/* The weight of edges between the vertex being considered (v) and other vertices that reside in

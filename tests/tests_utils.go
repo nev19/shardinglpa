@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"log"
-	"math"
 	"os"
 	"strconv"
 
@@ -56,33 +55,6 @@ func CreateTimesWriter(filename string) (*csv.Writer, *os.File) {
 	}
 
 	return writer, file
-}
-
-// Function that finds the best graph in terms of fitness and returns it
-// The rest of the graphs are discarded
-func GetBestGraph(seedResults []*shared.EpochResult) *shared.Graph {
-
-	// Safety check: return an empty graph if there are no results to compare
-	if len(seedResults) == 0 {
-		log.Println("No results to process.")
-		return &shared.Graph{}
-
-	}
-
-	//var bestSeed int64
-	var bestFitness float64 = math.MaxFloat64
-	var bestGraph *shared.Graph
-
-	for _, result := range seedResults {
-		if result.Fitness < bestFitness {
-			bestFitness = result.Fitness
-			bestGraph = result.Graph
-		}
-		// Free up memory by deleting the graphs
-		result.Graph = nil
-	}
-
-	return bestGraph
 }
 
 // Wrapper function used to prepare the results in the right format for the WriteResults function

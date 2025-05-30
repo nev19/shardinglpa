@@ -12,7 +12,6 @@ import (
 
 	"example.com/shardinglpa/paperclpa"
 	"example.com/shardinglpa/shared"
-	"example.com/shardinglpa/tests/final"
 )
 
 func main() {
@@ -26,10 +25,10 @@ func main() {
 	multi := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(multi)
 
-	// Run this commented out function to extract the epochs from the original dataset
-	//extractEpochs()
+	// Run this commented out function call to extract the epochs from the original dataset
+	//shared.ExtractEpochs()
 
-	// Run this commented out function to get statistics for the datasets
+	// Run these commented out function calls to get statistics for the datasets
 	//writeEpochStatistics(30, "shared/epochs/low_arrival_rate/", "datastats/low_arrival_rate_statistics.csv")
 	//writeEpochStatistics(12, "shared/epochs/high_arrival_rate/", "datastats/high_arrival_rate_statistics.csv")
 
@@ -42,9 +41,10 @@ func main() {
 
 	// The following section runs different tests, for the amount of times passed in to the function
 
-	// Run the Test Suite 'CLPA vs Concurrent CLPA' XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	// This tests CLPA as in paper vs parallel CLPA for 50 times each test
-	//concurrent.RunTestSuite(50)
+	// Run the Test Suite 'Half vs All Threads'
+	// This tests CLPA as in paper vs parallel CLPA for half and full (no of threads) goroutines launched
+	// for 50 times each test
+	//allthreads.RunTestSuite(50)
 
 	// Run the Test 'Update Mode of CLPA'
 	// This tests async vs sync update modes of CLPA for 20 times
@@ -64,26 +64,9 @@ func main() {
 	//penalty.RunTestSuite(50)
 
 	// Run the Test Suite 'CLPA vs Parallel CLPA vs My LPA'
-	// This tests CLPA as in paper vs Parallel CLPA vs My LPA for 50 times each test
-	final.RunTestSuite(3, 1)
+	// This tests CLPA as in paper vs Parallel CLPA vs My LPA for 30 times each test
+	//threepart.RunTestSuite(30)
 
-}
-
-// Function to generate epochs
-func extractEpochs() {
-
-	// Set paths to datasets
-	datasets := []string{
-		"shared/originaldataset/0_to_1_Block_Transactions.csv",
-		"shared/originaldataset/1_to_2_Block_Transactions.csv",
-	}
-
-	// Set the maximum number of transactions needed
-	maxTransactions := 3_000_000
-
-	// Call functions to split dataset into epochs according to the transaction arrival rate
-	shared.SplitMultipleDatasets(datasets, "shared/epochs/low_arrival_rate/", 100_000, maxTransactions)
-	shared.SplitMultipleDatasets(datasets, "shared/epochs/high_arrival_rate/", 250_000, maxTransactions)
 }
 
 func writeEpochStatistics(numberOfEpochs int, datasetDir string, outputFilePath string) {
@@ -172,17 +155,3 @@ func writeEpochStatistics(numberOfEpochs int, datasetDir string, outputFilePath 
 	log.Println("Dataset Statistics written to CSV successfully")
 
 }
-
-/*
-func memStat() {
-	var mem runtime.MemStats
-	runtime.ReadMemStats(&mem)
-
-	fmt.Println("-------- GC / Memory Stats --------")
-	fmt.Printf("Alloc = %v MiB\n", mem.Alloc/1024/1024)
-	fmt.Printf("TotalAlloc = %v MiB\n", mem.TotalAlloc/1024/1024)
-	fmt.Printf("Sys = %v MiB\n", mem.Sys/1024/1024)
-	fmt.Printf("NumGC = %v\n", mem.NumGC)
-	fmt.Printf("Last GC Pause = %v ms\n", mem.PauseNs[(mem.NumGC+255)%256]/1e6)
-}
-*/

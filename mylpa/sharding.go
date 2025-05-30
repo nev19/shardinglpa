@@ -138,7 +138,7 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	*/
 	//FAILED ATTEMPT
 
-	// Ensure all vertices have initialized LabelVotes
+	// Ensure all vertices have initialised LabelVotes
 	for _, vertex := range graph.Vertices {
 		if vertex.LabelVotes == nil {
 			vertex.LabelVotes = make(map[int]int)
@@ -163,13 +163,20 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 		clpaIteration(graph, beta, randomGen, rho) //pendingVertices) //FAILED ATTEMPT
 
 		// CLPA iterations should stop once convergence is reached
+
+		// Set flag to show convergencence occurred unless a label changes
 		converged := true
+
+		// Iterate through all vertices
 		for id, vertex := range graph.Vertices {
+
+			// Check if any vertex changed its label, and adjust flag if so
 			if oldLabels[id] != vertex.Label {
 				converged = false
 				break
 			}
 		}
+
 		if converged && iter+1 >= minIterations {
 			convergenceIter = iter + 1
 			break
