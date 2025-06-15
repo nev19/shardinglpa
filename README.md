@@ -12,7 +12,7 @@ This project investigates how graph-based algorithms can improve shard allocatio
 
 - **Paper CLPA** — A baseline implementation based on existing academic work
 - **Parallel CLPA** — A concurrent version leverging Go’s goroutines for scalability
-- **MyLPA** — A novel variant including among other optimisations and additions:
+- **MyLPA** or **Final LPA** — A novel variant including among other optimisations and additions:
   - A voting-based label update strategy
   - An improved penalty scoring formula for shard selection
 - **Experimentation Framework** — Includes multi-seed testing, convergence tracking, and detailed fitness metrics
