@@ -2,6 +2,7 @@ package shared
 
 import "math"
 
+// Returns max workload deviation from the average across shards (which is the workload imabalnce)
 func calculateWorkloadImbalance(graph *Graph) float64 {
 	// Calculate the total workload
 	totalWorkload := 0
@@ -25,15 +26,18 @@ func calculateWorkloadImbalance(graph *Graph) float64 {
 	return maxDifference
 }
 
+// Returns total cross shard workload, which is the total weight of edges crossing shard boundaries
 func calculateCrossShardWorkload(graph *Graph) int {
 	crossShardWorkload := 0
 
 	// Iterate over all vertices in the graph
 	for _, v := range graph.Vertices {
 		for neighbour, weight := range v.Edges {
+
 			// Count edges where the vertices are in different shards
 			if v.Label != graph.Vertices[neighbour].Label {
-				// Only process each edge once
+
+				// Only process each edge once (to avoid double counting)
 				if v.ID < neighbour {
 					crossShardWorkload += weight
 				}
@@ -44,6 +48,7 @@ func calculateCrossShardWorkload(graph *Graph) int {
 	return crossShardWorkload
 }
 
+// Returns the main metrics: workload imbalance, cross-shard workload, and combined fitness score
 func CalculateFitness(graph *Graph, alpha float64) (float64, int, float64) {
 	// Calculate workload imbalance
 	workloadImbalance := calculateWorkloadImbalance(graph)

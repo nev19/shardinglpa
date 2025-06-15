@@ -97,10 +97,10 @@ func calculateShardWorkloads(graph *shared.Graph) []int {
 	for _, v := range graph.Vertices { // Iterate through all vertices
 		for neighbourID, weight := range v.Edges { // Iterate through all neighbours
 			if v.Label == graph.Vertices[neighbourID].Label {
-				if v.ID < neighbourID { // Ensure each edge is processed only once
+				if v.ID < neighbourID { // Process undirected edge only once to avoid double counting
 					workloads[v.Label] += weight // Intra-shard tx
 				} else if v.ID == neighbourID {
-					workloads[v.Label] += weight // Special Intra-shard tx, tx with itself
+					workloads[v.Label] += weight // Self-loop (vertex connects to itself)
 				}
 			} else {
 				workloads[v.Label] += weight // Cross-shard tx

@@ -34,11 +34,6 @@ func ShardAllocation(datasetDir string, shards int, epoch int, graph *shared.Gra
 	// Prepare rand
 	randomGen := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	// TESTING - randomGen = rand.New(rand.NewSource(0))
-
-	// TESTING
-	//fmt.Println("Start of Epoch ", epochNumber)
-
 	// Create a new graph if it was not passed in to function
 	if graph == nil {
 		graph = &shared.Graph{
@@ -247,10 +242,6 @@ func RunClpaConvergenceTest(alpha float64, beta float64, tau int, rho int, graph
 func ClpaIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 	rho int, scoringPenalty ScoringPenalty) {
 
-	// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
-	// Initialise an array to store fitness values for each iteration
-	//var fitnessValues []float64
-
 	// Get a random order to use for this CLPA iteration
 	sortedVertices := setVerticesOrder(graph, randomGen)
 
@@ -260,41 +251,13 @@ func ClpaIterationAsync(graph *shared.Graph, beta float64, randomGen *rand.Rand,
 		// Calculate the score of shards with respect to current vertex
 		scores := scoringPenalty(graph, vertex, beta)
 
-		// TESTING - PRINT OUT SCORES
-		/*
-			fmt.Println("\nCLPA on VERTEX: ", i, vertex.ID)
-
-			// Dereference and print each value of scores
-			fmt.Print("SCORES for this vertex:")
-			for _, ptr := range scores {
-				if ptr != nil {
-					fmt.Print(" ", *ptr, " ") // Access the value via pointer
-				} else {
-					fmt.Print(" <nil> ")
-				}
-			}
-		*/
-
 		// Get the ID of the best shard with respect to current vertex
 		bestShard := getBestShard(scores, randomGen)
 		//fmt.Println("Winner: ", bestShard)
 
 		// Move current vertex to new best shard
 		moveVertex(graph, vertex, bestShard, rho)
-
-		// TESTING - PART OF CHECK FOR MONOTONIC QUESTION
-		// Calculate fitness and append to the array
-		//_, _, fitness := CalculateFitness(graph, 0.5) // Adjust alpha value as needed
-		//fitnessValues = append(fitnessValues, fitness)
 	}
-
-	/*
-		// Write fitness values to a CSV file
-		err := WriteFitnessToCSV(fitnessValues, "fitness_values.csv")
-		if err != nil {
-			panic(err) // Handle error as needed
-		}
-	*/
 }
 
 // Alternative function for a CLPA iteration with sync mode of updating instead of async

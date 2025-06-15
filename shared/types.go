@@ -1,16 +1,16 @@
 package shared
 
-// Define the Vertex structure - this represents an account
+// The Vertex struct represents an account
 type Vertex struct {
 	ID                 string         // Address of the vertex used as unique identifier
 	Label              int            // Current shard ID of where the vertex resides
 	Edges              map[string]int // Map of neighbour vertex IDs to edge weights
 	LabelUpdateCounter int            // Number of times the vertex has updated its label
 	NewLabel           int            // Used only for synchronous updating mode
-	LabelVotes         map[int]int
+	LabelVotes         map[int]int    // Map used for memory voting mechanism
 }
 
-// Define the Graph structure
+// The Graph struct
 type Graph struct {
 	Vertices       map[string]*Vertex // Map of vertex ID to Vertex struct
 	NumberOfShards int                // Total number of shards
@@ -23,7 +23,7 @@ type EpochResult struct {
 	Fitness            float64 // The fitness score
 	WorkloadImbalance  float64
 	CrossShardWorkload int
-	ConvergenceIter    int // -1 if no convergence, otherwise the iteration number
+	ConvergenceIter    int // -1 means no convergence, else set to the iteration number of convergence
 	Graph              *Graph
 	IterationsInfo     *IterationsInfo // Used only in convergence test
 }

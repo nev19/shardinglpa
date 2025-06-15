@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-// Columns to retain
+// Columns to retain from the dataset
 var columnsToKeep = map[string]bool{
 	"blockNumber": true,
 	"from":        true,
@@ -35,6 +35,7 @@ func ExtractEpochs() {
 
 // Function to read whole CSV file (such as epoch files)
 func ReadCSV(filename string) ([][]string, error) {
+
 	// Open the CSV file
 	file, err := os.Open(filename)
 	if err != nil {
@@ -78,8 +79,7 @@ func splitMultipleDatasets(datasets []string, outputDir string, chunkSize int, m
 	}
 }
 
-// Function to split the entire transactions dataset into multiple epoch files
-// Inputs: Dataset, Directory to save split files
+// Function to process multiple datasets and split them into epoch files based on arrival rate and max transactions
 func splitEpochs(inputFilePath string, outputDir string, startChunkNumber int, leftover [][]string,
 	chunkSize int, transactionsRemaining int) ([][]string, int, int, error) {
 

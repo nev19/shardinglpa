@@ -110,10 +110,10 @@ func calculateShardWorkloads(graph *shared.Graph) []int {
 	for _, v := range graph.Vertices { // Iterate through all vertices
 		for neighbourID, weight := range v.Edges { // Iterate through all neighbours
 			if v.Label == graph.Vertices[neighbourID].Label {
-				if v.ID < neighbourID { // Ensure each edge is processed only once
+				if v.ID < neighbourID { // Process undirected edge only once to avoid double counting
 					workloads[v.Label] += weight // Intra-shard tx
 				} else if v.ID == neighbourID {
-					workloads[v.Label] += weight // Special Intra-shard tx, tx with itself
+					workloads[v.Label] += weight // Self-loop (vertex connects to itself)
 				}
 			} else {
 				workloads[v.Label] += weight // Cross-shard tx
@@ -133,33 +133,6 @@ func moveVertex(graph *shared.Graph, vertex *shared.Vertex, newShard int, rho in
 	if oldShard == newShard || vertex.LabelUpdateCounter >= rho {
 		return
 	}
-
-	/*
-		//NEW ---------
-		// NO SMALL CHANGE METHOD
-		// Calculate score of staying in current shard (oldShard)
-		currentScore := 0
-		for neighborID, weight := range vertex.Edges {
-			if graph.Vertices[neighborID].Label == oldShard {
-				currentScore += weight
-			}
-		}
-
-		// Calculate score of moving to new shard (newShard)
-		newScore := 0
-		for neighborID, weight := range vertex.Edges {
-			if graph.Vertices[neighborID].Label == newShard {
-				newScore += weight
-			}
-		}
-
-		// Adaptive move: Only move if newScore is significantly better than currentScore
-		if float64(newScore) <= 1.0000000001*float64(currentScore) {
-			// If the new score is not at least 5% better, skip moving
-			return
-		}
-		//NEW ---------
-	*/
 
 	// The shard workloads are not calculated from scratch but rather updated since this is more efficient
 	intra, crossWithNew, crossWithOthers, special_intra := 0, 0, 0, 0

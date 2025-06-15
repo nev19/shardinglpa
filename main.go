@@ -44,7 +44,7 @@ func main() {
 	// Run the Test Suite 'Half vs All Threads'
 	// This tests CLPA as in paper vs parallel CLPA for half and full (no of threads) goroutines launched
 	// for 50 times each test
-	//allthreads.RunTestSuite(50)
+	//threads.RunTestSuite(50)
 
 	// Run the Test 'Update Mode of CLPA'
 	// This tests async vs sync update modes of CLPA for 20 times
@@ -69,6 +69,7 @@ func main() {
 
 }
 
+// Generates graph statistics for each epoch and writes them to a CSV file
 func writeEpochStatistics(numberOfEpochs int, datasetDir string, outputFilePath string) {
 
 	// Create the output CSV file

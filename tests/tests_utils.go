@@ -88,10 +88,6 @@ func WriteResults(groupedResults [][]*shared.EpochResult, writer *csv.Writer, te
 				fmt.Sprintf("%.3f", result.WorkloadImbalance),
 				strconv.Itoa(result.CrossShardWorkload),
 				strconv.Itoa(result.ConvergenceIter),
-				//fmt.Sprintf("%.3f", result.Duration.Seconds()),
-				//fmt.Sprintf("%.1f", beta),
-				//arrivalRate,
-				//strconv.Itoa(numberOfShards),
 			}
 
 			if err := writer.Write(record); err != nil {

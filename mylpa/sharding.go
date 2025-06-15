@@ -126,18 +126,6 @@ func ShardAllocation(datasetDir string, numberOfShards int, epochNumber int,
 func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 	randomGen *rand.Rand, seed int64) *shared.EpochResult {
 
-	//FAILED (attempt to implement passive)
-	/*
-		// Map to store those vertices that may change their label on the next run
-		pendingVertices := make(map[string]struct{})
-
-		// Add each vertex to the pending list initially
-		for id := range graph.Vertices {
-			pendingVertices[id] = struct{}{}
-		}
-	*/
-	//FAILED ATTEMPT
-
 	// Ensure all vertices have initialised LabelVotes
 	for _, vertex := range graph.Vertices {
 		if vertex.LabelVotes == nil {
@@ -160,7 +148,7 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 		}
 
 		// Perform an iteration of CLPA while keeping track of which vertices are pending
-		clpaIteration(graph, beta, randomGen, rho) //pendingVertices) //FAILED ATTEMPT
+		clpaIteration(graph, beta, randomGen, rho)
 
 		// CLPA iterations should stop once convergence is reached
 
@@ -200,23 +188,12 @@ func runClpa(alpha float64, beta float64, tau int, rho int, graph *shared.Graph,
 
 // The function that performs an iteration through all vertices and assigns shards
 func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho int) {
-	// FAILED ATTEMPT
-	//, pendingVertices map[string]struct{}) {
 
 	// Get a random order to use for this CLPA iteration
 	sortedVertices := setVerticesOrder(graph, randomGen)
 
 	// Iterate through each vertex in some order
 	for _, vertex := range sortedVertices {
-
-		//FAILED ATTEMPT#
-		/*
-			// Skip this vertex if it is not in the pending list (non-passive)
-			if _, isPending := pendingVertices[vertex.ID]; !isPending {
-				continue
-			}
-		*/
-		//FAILED ATTEMPT
 
 		// Calculate the score of shards with respect to current vertex
 		scores := calculateScores(graph, vertex, beta)
@@ -241,41 +218,7 @@ func clpaIteration(graph *shared.Graph, beta float64, randomGen *rand.Rand, rho 
 		if winningShard != vertex.Label && (vertex.LabelVotes[winningShard]-vertex.LabelVotes[vertex.Label] >= voteMargin) {
 			moveVertex(graph, vertex, winningShard, rho)
 		}
-
-		//FAILED ATTEMPT
-		/*
-			// Check if vertex has become passive, if so delete from pendingVertices, otherwise add it
-			if isPassive(vertex, graph) {
-				delete(pendingVertices, vertex.ID)
-			} else {
-				pendingVertices[vertex.ID] = struct{}{}
-			}
-
-			// Check if neighbouring vertices of current vertex have become passive
-			for neighborID := range vertex.Edges {
-				neighbor := graph.Vertices[neighborID]
-
-				// If neighbouring vertex has become passive, delete it from the pending vertices if it is there
-				// Else, add it to the pending vertices (it is overwritten if it is present already)
-				if isPassive(neighbor, graph) {
-					delete(pendingVertices, neighborID)
-				} else {
-					pendingVertices[neighborID] = struct{}{}
-				}
-			}
-		*/
-		//FAILED ATTEMPT
 	}
-}
-
-// FAILED ATTEMPT
-func isPassive(vertex *shared.Vertex, graph *shared.Graph) bool {
-	for neighborID := range vertex.Edges {
-		if graph.Vertices[neighborID].Label != vertex.Label {
-			return false
-		}
-	}
-	return true
 }
 
 // Function to get seeds from file starting from a specific index

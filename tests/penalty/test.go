@@ -12,7 +12,7 @@ import (
 
 func RunTestSuite(runs int) {
 
-	totalTests := 20
+	totalTests := 15
 
 	log.Printf("*********** TEST SUITE 'Paper Penalty vs New Penalty' STARTED (%d Tests in total) ***********", totalTests)
 
@@ -147,7 +147,7 @@ func RunTestSuite(runs int) {
 	beta = 0.1
 
 	//TEST 11
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 24", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -155,7 +155,7 @@ func RunTestSuite(runs int) {
 	beta = 0.3
 
 	//TEST 12
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 24", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -163,7 +163,7 @@ func RunTestSuite(runs int) {
 	beta = 0.5
 
 	//TEST 13
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 24", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -171,7 +171,7 @@ func RunTestSuite(runs int) {
 	beta = 0.7
 
 	//TEST 14
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 24", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
@@ -179,7 +179,7 @@ func RunTestSuite(runs int) {
 	beta = 0.9
 
 	//TEST 15
-	log.Printf("Started Test %d/%d - beta = %.1f, shards = 8", test, totalTests, beta)
+	log.Printf("Started Test %d/%d - beta = %.1f, shards = 24", test, totalTests, beta)
 	runTest(test, runs, numberOfShards, arrivalRate, numberOfEpochs, alpha, beta,
 		tau, rho, runClpaIter, writerPaperPen, writerNewPen, writerTimes, newPenaltyClpaCall)
 	test++
